@@ -11,12 +11,13 @@ import numpy as np
 import CustomTransforms
 cv2.setNumThreads(0)
 cv2.ocl.setUseOpenCL(False)
+# we need the most current version of albumentations from git, otherwise it will not compile on newer python versions
+# pip install -U git+https://github.com/albumentations-team/albumentations
 import albumentations as albu
 import matplotlib.pyplot as plt
 import torch
 from IndexTracker import IndexTracker
 import copy
-from numba import jit
 
 '''Augments given data, which is stored in a dictionary'''
 class DataAugmentation(object):
