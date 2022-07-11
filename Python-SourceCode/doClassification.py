@@ -1,14 +1,4 @@
 # -*- coding: utf-8 -*-
-
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Nov  6 16:56:53 2019
-
-@author: mittmann
-"""
-# import cProfile
-# import pstats
-# from pstats import SortKey
 import os
 
 from DsaDataset import DsaDataset
@@ -67,8 +57,10 @@ if __name__ == "__main__":
 
     MODEL_F = "models\\model_frontal.pt"
     MODEL_L = "models\\model_lateral.pt"
-    IMAGE_L = "images\\263-01-aci-l-s.nii"
-    IMAGE_F = "images\\263-01-aci-l-f.nii"
+    # IMAGE_L = "images\\thrombYes\\263-01-aci-l-s.nii"
+    IMAGE_L = "images\\thrombNo\\095-03-aci-r-s.nii"
+    # IMAGE_F = "images\\thrombYes\\263-01-aci-l-f.nii"
+    IMAGE_F = "images\\thrombNo\\095-03-aci-r-f.nii"
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(f"Running on {device}")
