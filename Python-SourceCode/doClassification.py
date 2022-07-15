@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import time
 
 from DsaDataset import DsaDataset
 from torch.utils.data import DataLoader
@@ -53,6 +54,7 @@ def load_images(image_f, image_l):
 
 
 if __name__ == "__main__":
+    t0 = time.time()
     torch.set_num_threads(8)
 
     MODEL_F = "models\\model_frontal.pt"
@@ -89,14 +91,18 @@ if __name__ == "__main__":
     model_lateral.load_state_dict(checkpoint_lateral['model_state_dict'])
     model_lateral.to(device)
 
+    t1 = time.time()
     data_prepared = load_images(IMAGE_F, IMAGE_L)
 
     images_frontal = torch.unsqueeze(data_prepared['image'], 0)
     images_lateral = torch.unsqueeze(data_prepared['imageOtherView'], 0)
 
+    t2 = time.time()
+
     output_frontal = model_frontal(images_frontal)
     output_lateral = model_lateral(images_lateral)
 
+    t3 = time.time()
     del images_frontal
     del images_lateral
 
@@ -107,3 +113,5 @@ if __name__ == "__main__":
 
     print(f"Estimate Frontal (has Thrombus?): {estimate_frontal == THROMBUS_YES} / Raw was {activation_f}")
     print(f"Estimate Lateral (has Thrombus?): {estimate_lateral == THROMBUS_YES} / Raw was {activation_l}")
+
+    print(f"Timings: \n Init model:{t1-t0} ({(t1-t0)*100/(t3-t0)}%)\nLoad/Prepare Data: {t2-t1} ({(t2-t1)*100/(t3-t0)}%)\nClassification: {t3-t2} ({(t3-t2)*100/(t3-t0)}%)")
