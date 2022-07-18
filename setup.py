@@ -2,11 +2,7 @@ from setuptools import setup
 
 setup(
     name='DSA_CNN_Demonstrator',
-    version='',
+    version='1.0',
     packages=['Python-SourceCode'],
-    url='',
-    license='',
     author='Timo',
-    author_email='',
-    description=''
 )
