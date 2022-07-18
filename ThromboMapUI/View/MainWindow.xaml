@@ -1,0 +1,55 @@
+﻿<Window x:Class="ThromboMapUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:view="clr-namespace:ThromboMapUI.View"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="ExtraLight"
+        TextElement.FontSize="14"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        mc:Ignorable="d"
+        Title="Thrombomap" Height="400" Width="600">
+    <Window.DataContext>
+        <view:MainWindowViewModel/>
+    </Window.DataContext>
+    <WrapPanel>
+        <TextBlock
+            Style="{StaticResource MaterialDesignHeadline2TextBlock}"
+            Text="Thrombomap" Margin="20" HorizontalAlignment="Center"/>
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <Grid.ColumnDefinitions >
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Button Grid.Row="0" Grid.Column="0" Margin="10" Command="{Binding BrowseFrontalCommand}">Browse Frontal</Button>
+            <Label Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"> Non Selected </Label>
+            <Image Grid.Row="0" Grid.Column="2" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" x:Name="ImageFrontal"></Image>   
+            
+            <Button Grid.Row="1" Grid.Column="0" Margin="10" Command="{Binding BrowseLateralCommand}">Browse Lateral</Button>
+            <Label Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"> Non Selected </Label>
+            <Image Grid.Row="1" Grid.Column="2" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" x:Name="ImageLateral"></Image>
+            
+            <Button Grid.Row="2" Grid.Column="0" Margin="10"   Style="{StaticResource MaterialDesignFloatingActionButton}"
+                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
+                    materialDesign:ButtonProgressAssist.Value="-1"
+                    materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                    Content="{materialDesign:PackIcon RobotExcited}"
+                    Command="{Binding StartClassificationCommand}"/>
+            <Label Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"> No Result yet. </Label>
+        </Grid>
+    </WrapPanel>
+</Window>
