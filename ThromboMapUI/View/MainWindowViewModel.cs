@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Microsoft.Win32;
 
 namespace ThromboMapUI.View;
 
@@ -19,6 +21,8 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private RelayCommand<object>? _startClassificationCommand;
     private RelayCommand<object>? _browseFrontalCommand;
     private RelayCommand<object>? _browseLateralCommand;
+    private string _fileNameFrontal;
+
     public ICommand StartClassificationCommand { 
         get {
             return _startClassificationCommand ??= new RelayCommand<object>(p => StartClassificationOnClick(), a => true);
@@ -36,6 +40,20 @@ public class MainWindowViewModel : INotifyPropertyChanged
         } 
     }
 
+    public string FileNameFrontal
+    {
+        get => _fileNameFrontal;
+        private set {
+            if (_fileNameFrontal != value)
+            {
+                _fileNameFrontal = value;
+                OnPropertyChanged(nameof(FileNameFrontal));
+            } 
+        }
+    }
+
+    public string FileNameLateral { get; private set; }
+
     private void StartClassificationOnClick()
     {
         // TODO
@@ -43,11 +61,25 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
     private void BrowseFrontalOnClick()
     {
-        // TODO
+        var file = OpenFileChooser();
+        if (file != null)
+        {
+            FileNameFrontal = file;
+        }
     }
     
     private void BrowseLateralOnClick()
     {
-        // TODO
+        var file = OpenFileChooser();
+        if (file != null)
+        {
+            FileNameLateral = file;
+        }
+    }
+
+    private string? OpenFileChooser()
+    {
+        var openFileDialog = new OpenFileDialog();
+        return openFileDialog.ShowDialog() == true ? openFileDialog.FileName : null;
     }
 }
