@@ -1,16 +1,11 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.Configuration;
 using CliWrap;
 
-namespace ThromboMapUI.Util;
+namespace Services.FileUtils;
 
 public class DicomConverter
 {
-    // TODO: Make path relative
-    private const string ConverterPath = "ThromboMapUI\\External\\plastimatch\\plastimatch.exe";
-    
+    private static readonly string ConverterPath = Configuration.PlastimatchPath;
     
     public static async Task<string> Dicom2Nifti(string? inputPath)
     {

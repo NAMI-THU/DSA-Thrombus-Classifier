@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Configuration;
+using System.Runtime.InteropServices;
 using System.Text;
 using Newtonsoft.Json;
 using Services.AiService.Requests;
@@ -8,8 +9,8 @@ namespace Services.AiService;
 
 public class AiServiceCommunication
 {
-    // TODO: Change
-    private static readonly HttpClient Client = new() {BaseAddress = new Uri("http://127.0.0.1:5000/") };
+    // TODO: Quite a security issue here!
+    private static readonly HttpClient Client = new() {BaseAddress = new Uri($"http://{Configuration.AiServiceUrl}/") };
 
     
     public static async Task<ClassificationResponse> ClassifySequence(string pathToFrontal, string pathToLateral)

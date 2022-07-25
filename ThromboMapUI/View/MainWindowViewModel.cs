@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Services.AiService;
+using Services.FileUtils;
 using ThromboMapUI.Util;
 
 namespace ThromboMapUI.View;
