@@ -8,10 +8,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="CliWrap" Version="3.4.4" />
       <PackageReference Include="MaterialDesignThemes" Version="4.5.0" />
       <PackageReference Include="Nifti.NET" Version="1.1.4" />
       <PackageReference Include="SimpleITK-win64-CSharp-x64" Version="1.0.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Services\Services.csproj" />
     </ItemGroup>
 
 </Project>

@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
+using Services.AiService;
 using ThromboMapUI.Util;
 
 namespace ThromboMapUI.View;
@@ -34,8 +35,11 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private bool _convertFrontalInProgress;
     private bool _convertFrontalEnabled;
     private bool _convertLateralEnabled;
+    private bool _classificationInProgress;
+    private bool _startClassificationEnabled = true; // TODO
     private ImageSource _imageDisplayFrontal = new BitmapImage();
     private ImageSource _imageDisplayLateral = new BitmapImage();
+    private string _classificationResultsText = "Not run yet.";
 
     public ICommand StartClassificationCommand { 
         get {
@@ -134,6 +138,28 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
+    public bool ClassificationInProgress
+    {
+        get => _classificationInProgress;
+        private set
+        {
+            if (_classificationInProgress == value) return;
+            _classificationInProgress = value;
+            OnPropertyChanged(nameof(ClassificationInProgress));
+        }
+    }
+
+    public bool StartClassificationEnabled
+    {
+        get => _startClassificationEnabled;
+        private set
+        {
+            if (_startClassificationEnabled == value) return;
+            _startClassificationEnabled = value;
+            OnPropertyChanged(nameof(StartClassificationEnabled));
+        }
+    }
+
     public ImageSource ImageDisplayFrontal
     {
         get => _imageDisplayFrontal;
@@ -155,9 +181,15 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    private void StartClassificationOnClick()
+    public string ClassificationResultsText
     {
-        // TODO
+        get => _classificationResultsText;
+        private set
+        {
+            if (_classificationResultsText == value) return;
+            _classificationResultsText = value;
+            OnPropertyChanged(nameof(ClassificationResultsText));
+        }
     }
 
     private void BrowseFrontalOnClick()
@@ -184,7 +216,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     {
         ConvertFrontalEnabled = false;
         ConvertFrontalInProgress = true;
-        var newPath = await FileConverter.Dicom2Nifti(FileNameFrontal);
+        var newPath = await DicomConverter.Dicom2Nifti(FileNameFrontal);
         ConvertFrontalInProgress = false;
         FileNameFrontal = newPath;
         
@@ -197,13 +229,22 @@ public class MainWindowViewModel : INotifyPropertyChanged
     {
         ConvertLateralEnabled = false;
         ConvertLateralInProgress = true;
-        var newPath = await FileConverter.Dicom2Nifti(FileNameLateral);
+        var newPath = await DicomConverter.Dicom2Nifti(FileNameLateral);
         ConvertLateralInProgress = false;
         FileNameLateral = newPath;
         
         // Load and display image
         // var bitmap = await ImageUtil.LoadNiftiToBitmap(newPath);
         // ImageDisplayLateral = bitmap;
+    }
+    
+    private async void StartClassificationOnClick()
+    {
+        // TODO Check if paths are valid and everything is converted and set
+        ClassificationInProgress = true;
+        var response = await AiServiceCommunication.ClassifySequence(FileNameFrontal, FileNameLateral);
+        ClassificationInProgress = false;
+        ClassificationResultsText = $"Frontal: {response.OutputFrontal} | Lateral: {response.OutputLateral}";
     }
 
     private string? OpenFileChooser()
@@ -239,5 +280,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
                 ConvertLateralEnabled = true;
             }
         }
+
+        // TODO: Change to proper status and enable StartClassification
     }
 }

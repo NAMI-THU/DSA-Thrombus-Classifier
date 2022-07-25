@@ -60,12 +60,13 @@
             
             <Button Grid.Row="2" Grid.Column="0" Margin="10"   
                     Style="{StaticResource MaterialDesignFloatingActionButton}"
-                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
+                    IsEnabled="{Binding StartClassificationEnabled}"
+                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ClassificationInProgress}"
                     materialDesign:ButtonProgressAssist.Value="-1"
                     materialDesign:ButtonProgressAssist.IsIndeterminate="True"
                     Content="{materialDesign:PackIcon RobotExcited}"
                     Command="{Binding StartClassificationCommand}"/>
-            <Label Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"> No Result yet. </Label>
+            <Label Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Content="{Binding ClassificationResultsText}"/> 
         </Grid>
     </StackPanel>
 </Window>

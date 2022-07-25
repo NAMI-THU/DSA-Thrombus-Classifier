@@ -6,7 +6,7 @@ using CliWrap;
 
 namespace ThromboMapUI.Util;
 
-public class FileConverter
+public class DicomConverter
 {
     // TODO: Make path relative
     private const string ConverterPath = "ThromboMapUI\\External\\plastimatch\\plastimatch.exe";
