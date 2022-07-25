@@ -1,0 +1,17 @@
+Plastimatch is copyrighted software.
+
+  Copyright (c) 2004-2011 Massachusetts General Hospital
+  All rights reserved
+
+  You can freely use and distribute plastimatch under a BSD-style license.
+  See LICENSE.TXT for details
+
+------------------------------------------------------------------------
+RTOG format routines (exchkeys.h)
+
+  These routines were developed by John Matthews of the RTOG.  They 
+  were developed using NCI funding, and are meant to be used by 
+  vendors for converting to and from RTOG format.
+
+  http://itc.wustl.edu/Exchcode.html
+

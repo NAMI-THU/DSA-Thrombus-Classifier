@@ -32,18 +32,34 @@
             <Grid.ColumnDefinitions >
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             
             <Button Grid.Row="0" Grid.Column="0" Margin="10" Command="{Binding BrowseFrontalCommand}">Browse Frontal</Button>
-            <Label Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Content="{Binding FileNameFrontal}"/>
-            <Image Grid.Row="0" Grid.Column="2" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" x:Name="ImageFrontal"></Image>   
+            <Button Grid.Row="0" Grid.Column="1" Margin="10" 
+                    Command="{Binding ConvertFrontalCommand}"
+                    IsEnabled="{Binding ConvertFrontalEnabled}"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    materialDesign:ButtonProgressAssist.Value="-1"
+                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ConvertFrontalInProgress}"
+                    materialDesign:ButtonProgressAssist.IsIndeterminate="True">Convert</Button>
+            <Label Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Content="{Binding FileNameFrontal}"/>
+            <Image Grid.Row="0" Grid.Column="3" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" Source="{Binding ImageDisplayFrontal}"></Image>   
             
             <Button Grid.Row="1" Grid.Column="0" Margin="10" Command="{Binding BrowseLateralCommand}">Browse Lateral</Button>
-            <Label Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Content="{Binding FileNameLateral}"/>  
-            <Image Grid.Row="1" Grid.Column="2" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" x:Name="ImageLateral"></Image>
+            <Button Grid.Row="1" Grid.Column="1" Margin="10" 
+                    Command="{Binding ConvertLateralCommand}"
+                    IsEnabled="{Binding ConvertLateralEnabled}"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    materialDesign:ButtonProgressAssist.Value="-1"
+                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ConvertLateralInProgress}"
+                    materialDesign:ButtonProgressAssist.IsIndeterminate="True">Convert</Button>
+            <Label Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Content="{Binding FileNameLateral}"/>  
+            <Image Grid.Row="1" Grid.Column="3" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" Source="{Binding ImageDisplayLateral}"></Image>
             
-            <Button Grid.Row="2" Grid.Column="0" Margin="10"   Style="{StaticResource MaterialDesignFloatingActionButton}"
+            <Button Grid.Row="2" Grid.Column="0" Margin="10"   
+                    Style="{StaticResource MaterialDesignFloatingActionButton}"
                     materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
                     materialDesign:ButtonProgressAssist.Value="-1"
                     materialDesign:ButtonProgressAssist.IsIndeterminate="True"
