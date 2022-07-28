@@ -53,15 +53,19 @@ def load_images(image_f, image_l):
     return augmentation.convertToTensor()
 
 
-if __name__ == "__main__":
+def do_classification(image_frontal, image_lateral):
     t0 = time.time()
     torch.set_num_threads(8)
 
     MODEL_F = "models\\model_frontal.pt"
     MODEL_L = "models\\model_lateral.pt"
-    IMAGE_L = "images\\thrombYes\\263-01-aci-l-s.nii"
+
+    IMAGE_L = image_lateral
+    IMAGE_F = image_frontal
+
+    # IMAGE_L = "images\\thrombYes\\263-01-aci-l-s.nii"
     # IMAGE_L = "images\\thrombNo\\095-03-aci-r-s.nii"
-    IMAGE_F = "images\\thrombYes\\263-01-aci-l-f.nii"
+    # IMAGE_F = "images\\thrombYes\\263-01-aci-l-f.nii"
     # IMAGE_F = "images\\thrombNo\\095-03-aci-r-f.nii"
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -114,4 +118,10 @@ if __name__ == "__main__":
     print(f"Estimate Frontal (has Thrombus?): {estimate_frontal == THROMBUS_YES} / Raw was {activation_f}")
     print(f"Estimate Lateral (has Thrombus?): {estimate_lateral == THROMBUS_YES} / Raw was {activation_l}")
 
-    print(f"Timings: \n Init model:{t1-t0} ({(t1-t0)*100/(t3-t0)}%)\nLoad/Prepare Data: {t2-t1} ({(t2-t1)*100/(t3-t0)}%)\nClassification: {t3-t2} ({(t3-t2)*100/(t3-t0)}%)")
+    print(
+        f"Timings: \n Init model:{t1 - t0} ({(t1 - t0) * 100 / (t3 - t0)}%)\nLoad/Prepare Data: {t2 - t1} ({(t2 - t1) * 100 / (t3 - t0)}%)\nClassification: {t3 - t2} ({(t3 - t2) * 100 / (t3 - t0)}%)")
+
+    return activation_f, activation_l
+
+if __name__ == "__main__":
+    do_classification("images\\thrombYes\\263-01-aci-l-f.nii", "images\\thrombYes\\263-01-aci-l-s.nii")
