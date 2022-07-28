@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -30,6 +31,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private RelayCommand<object>? _browseLateralCommand;
     private RelayCommand<object>? _convertFrontalCommand;
     private RelayCommand<object>? _convertLateralCommand;
+    private RelayCommand<object>? _windowLoadedCommand;
     private string? _fileNameFrontal;
     private string? _fileNameLateral;
     private bool _convertLateralInProgress;
@@ -70,6 +72,14 @@ public class MainWindowViewModel : INotifyPropertyChanged
     {
         get {
             return _convertLateralCommand ??= new RelayCommand<object>(p=>ConvertLateralOnClick(), a=>_convertLateralEnabled);
+        }
+    }
+
+    public ICommand WindowLoadedCommand
+    {
+        get
+        {
+            return _windowLoadedCommand ??= new RelayCommand<object>(p=>PreloadModels(), a=>true); 
         }
     }
 
@@ -193,6 +203,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
+
     private void BrowseFrontalOnClick()
     {
         var file = OpenFileChooser();
@@ -283,5 +294,14 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
 
         // TODO: Change to proper status and enable StartClassification
+    }
+
+    private async void PreloadModels()
+    {
+        StartClassificationEnabled = false;
+        ClassificationInProgress = true;
+        await AiServiceCommunication.PreloadModels();
+        StartClassificationEnabled = true;
+        ClassificationInProgress = false;
     }
 }

@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:view="clr-namespace:ThromboMapUI.View"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="ExtraLight"
         TextElement.FontSize="14"
@@ -17,6 +18,11 @@
     <Window.DataContext>
         <view:MainWindowViewModel/>
     </Window.DataContext>
+    <b:Interaction.Triggers>
+        <b:EventTrigger EventName="Loaded">
+            <b:InvokeCommandAction Command="{Binding WindowLoadedCommand}" />
+        </b:EventTrigger>
+    </b:Interaction.Triggers>
     <StackPanel Orientation="Vertical">
         <TextBlock
             Style="{StaticResource MaterialDesignHeadline2TextBlock}"

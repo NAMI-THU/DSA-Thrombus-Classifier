@@ -21,6 +21,11 @@ public class AiServiceCommunication
         var content = await response.Content.ReadAsStringAsync();
         return JsonConvert.DeserializeObject<ClassificationResponse>(content) ?? throw new ExternalException("Failed to convert servers response");
     }
+
+    public static async Task PreloadModels()
+    {
+        await Get("/AiService/PreloadModels");
+    }
     
     private static async Task<HttpResponseMessage> Post(object request, string uri) {
         var json = JsonConvert.SerializeObject(request);
@@ -29,6 +34,13 @@ public class AiServiceCommunication
         var response = await Client.PostAsync(uri, data);
         response.EnsureSuccessStatusCode();
 
+        return response;
+    }
+
+    private static async Task<HttpResponseMessage> Get( string uri)
+    {
+        var response = await Client.GetAsync(uri);
+        response.EnsureSuccessStatusCode();
         return response;
     }
 }
