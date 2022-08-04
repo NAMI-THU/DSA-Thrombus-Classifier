@@ -31,7 +31,7 @@ def classification_requested():
     if not path_frontal or not os.path.exists(path_frontal) or not path_lateral or not os.path.exists(path_lateral):
         print("At least one of the requested paths does not exist.")
         return flask.Response(status=400)
-    activation_l, activation_f = classificator.do_classification(path_frontal, path_lateral)
-    result = {'OutputFrontal': activation_f, 'OutputLateral': activation_l}
+    activations_f, activations_l, estimates_f, estimates_l = classificator.do_classification(path_frontal, path_lateral)
+    result = {'OutputFrontal': activations_f, 'OutputLateral': activations_l}
     print("Classification done.")
     return json.dumps(result)
