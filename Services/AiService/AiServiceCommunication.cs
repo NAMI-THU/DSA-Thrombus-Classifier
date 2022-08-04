@@ -7,10 +7,10 @@ using Services.AiService.Responses;
 
 namespace Services.AiService;
 
-public class AiServiceCommunication
+public static class AiServiceCommunication
 {
     // TODO: Quite a security issue here!
-    private static readonly HttpClient Client = new() {BaseAddress = new Uri($"http://{Configuration.AiServiceUrl}/") };
+    private static readonly HttpClient Client = new() {BaseAddress = new Uri($"http://{Configuration.AiServiceUrl}/"), Timeout = TimeSpan.FromMinutes(5)};
 
     
     public static async Task<ClassificationResponse> ClassifySequence(string pathToFrontal, string pathToLateral)

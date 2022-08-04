@@ -159,10 +159,11 @@ public class MainWindowViewModel : INotifyPropertyChanged
             if (_classificationInProgress == value) return;
             _classificationInProgress = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(StartClassificationEnabled));
         }
     }
 
-    public bool StartClassificationEnabled => FileFrontalValid && FileLateralValid && ModelsPrepared;
+    public bool StartClassificationEnabled => FileFrontalValid && FileLateralValid && ModelsPrepared && !ClassificationInProgress;
 
     public bool FileFrontalValid
     {
@@ -287,7 +288,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         ClassificationInProgress = true;
         var response = await AiServiceCommunication.ClassifySequence(FileNameFrontal, FileNameLateral);
         ClassificationInProgress = false;
-        ClassificationResultsText = $"Frontal: {response.OutputFrontal} | Lateral: {response.OutputLateral}";
+        ClassificationResultsText = $"Frontal: {string.Join(", ", response.OutputFrontal)} | Lateral: {string.Join(", ", response.OutputLateral)}";
     }
 
     private string? OpenFileChooser()
@@ -298,7 +299,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
     private void CheckFileFormats()
     {
-        if (FileNameFrontal != null)
+        if (FileNameFrontal != null && !ConvertFrontalInProgress)
         {
             if (FileNameFrontal.EndsWith(".nii"))
             {
@@ -318,7 +319,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
             FileFrontalValid = false;
         }
 
-        if (FileNameLateral != null)
+        if (FileNameLateral != null && !ConvertLateralInProgress)
         {
             if (FileNameLateral.EndsWith(".nii"))
             {
