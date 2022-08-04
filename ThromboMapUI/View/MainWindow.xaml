@@ -8,7 +8,7 @@
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="ExtraLight"
-        TextElement.FontSize="14"
+        TextElement.FontSize="12"
         TextOptions.TextFormattingMode="Ideal" 
         TextOptions.TextRenderingMode="Auto"        
         Background="{DynamicResource MaterialDesignPaper}"
@@ -39,14 +39,14 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100px"/>
             </Grid.ColumnDefinitions>
             
             <Button Grid.Row="0" Grid.Column="0" Margin="10" Command="{Binding BrowseFrontalCommand}">Browse Frontal</Button>
             <Button Grid.Row="0" Grid.Column="1" Margin="10" 
                     Command="{Binding ConvertFrontalCommand}"
                     IsEnabled="{Binding ConvertFrontalEnabled}"
-                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Style="{StaticResource MaterialDesignRaisedLightButton}"
                     materialDesign:ButtonProgressAssist.Value="-1"
                     materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ConvertFrontalInProgress}"
                     materialDesign:ButtonProgressAssist.IsIndeterminate="True">Convert</Button>
@@ -57,7 +57,7 @@
             <Button Grid.Row="1" Grid.Column="1" Margin="10" 
                     Command="{Binding ConvertLateralCommand}"
                     IsEnabled="{Binding ConvertLateralEnabled}"
-                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Style="{StaticResource MaterialDesignRaisedLightButton}"
                     materialDesign:ButtonProgressAssist.Value="-1"
                     materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ConvertLateralInProgress}"
                     materialDesign:ButtonProgressAssist.IsIndeterminate="True">Convert</Button>
@@ -65,14 +65,14 @@
             <Image Grid.Row="1" Grid.Column="3" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" Source="{Binding ImageDisplayLateral}"></Image>
             
             <Button Grid.Row="2" Grid.Column="0" Margin="10"   
-                    Style="{StaticResource MaterialDesignFloatingActionButton}"
+                    Style="{StaticResource MaterialDesignFloatingActionSecondaryLightButton}"
                     IsEnabled="{Binding StartClassificationEnabled}"
                     materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ClassificationInProgress}"
                     materialDesign:ButtonProgressAssist.Value="-1"
                     materialDesign:ButtonProgressAssist.IsIndeterminate="True"
                     Content="{materialDesign:PackIcon RobotExcited}"
                     Command="{Binding StartClassificationCommand}"/>
-            <Label Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Content="{Binding ClassificationResultsText}"/> 
+            <Label Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Content="{Binding ClassificationResultsText}"/> 
         </Grid>
     </StackPanel>
 </Window>

@@ -17,10 +17,10 @@ namespace ThromboMapUI.View;
 
 public class MainWindowViewModel : INotifyPropertyChanged
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
     public const int DisplayPathLength = 30;
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) {
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
     
@@ -39,10 +39,12 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private bool _convertFrontalEnabled;
     private bool _convertLateralEnabled;
     private bool _classificationInProgress;
-    private bool _startClassificationEnabled = true; // TODO
     private ImageSource _imageDisplayFrontal = new BitmapImage();
     private ImageSource _imageDisplayLateral = new BitmapImage();
     private string _classificationResultsText = "Not run yet.";
+    private bool _fileFrontalValid;
+    private bool _fileLateralValid;
+    private bool _modelsPrepared;
 
     public ICommand StartClassificationCommand { 
         get {
@@ -90,7 +92,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             if (_fileNameFrontal == value) return;
             _fileNameFrontal = value;
-            OnPropertyChanged(nameof(FileNameFrontal));
+            OnPropertyChanged();
         }
     }
 
@@ -101,7 +103,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             if (_fileNameLateral == value) return;
             _fileNameLateral = value;
-            OnPropertyChanged(nameof(FileNameLateral));
+            OnPropertyChanged();
         }
     }
 
@@ -112,7 +114,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             if (_convertFrontalInProgress == value) return;
             _convertFrontalInProgress = value;
-            OnPropertyChanged(nameof(ConvertFrontalInProgress));
+            OnPropertyChanged();
         }
     }
     
@@ -123,7 +125,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             if (_convertLateralInProgress == value) return;
             _convertLateralInProgress = value;
-            OnPropertyChanged(nameof(ConvertLateralInProgress));
+            OnPropertyChanged();
         }
     }
     
@@ -134,7 +136,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             if (_convertFrontalEnabled == value) return;
             _convertFrontalEnabled = value;
-            OnPropertyChanged(nameof(ConvertFrontalEnabled));
+            OnPropertyChanged();
         }
     }
     
@@ -145,7 +147,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             if (_convertLateralEnabled == value) return;
             _convertLateralEnabled = value;
-            OnPropertyChanged(nameof(ConvertLateralEnabled));
+            OnPropertyChanged();
         }
     }
 
@@ -156,17 +158,44 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             if (_classificationInProgress == value) return;
             _classificationInProgress = value;
-            OnPropertyChanged(nameof(ClassificationInProgress));
+            OnPropertyChanged();
         }
     }
 
-    public bool StartClassificationEnabled
+    public bool StartClassificationEnabled => FileFrontalValid && FileLateralValid && ModelsPrepared;
+
+    public bool FileFrontalValid
     {
-        get => _startClassificationEnabled;
+        get => _fileFrontalValid;
         private set
         {
-            if (_startClassificationEnabled == value) return;
-            _startClassificationEnabled = value;
+            if (value == _fileFrontalValid) return;
+            _fileFrontalValid = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(StartClassificationEnabled));
+        }
+    }
+
+    public bool FileLateralValid
+    {
+        get => _fileLateralValid;
+        private set
+        {
+            if (value == _fileLateralValid) return;
+            _fileLateralValid = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(StartClassificationEnabled));
+        }
+    }
+
+    public bool ModelsPrepared
+    {
+        get => _modelsPrepared;
+        private set
+        {
+            if (value == _modelsPrepared) return;
+            _modelsPrepared = value;
+            OnPropertyChanged();
             OnPropertyChanged(nameof(StartClassificationEnabled));
         }
     }
@@ -178,7 +207,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             if (_imageDisplayFrontal == value) return;
             _imageDisplayFrontal = value;
-            OnPropertyChanged(nameof(ImageDisplayFrontal));
+            OnPropertyChanged();
         }
     }
     public ImageSource ImageDisplayLateral
@@ -188,7 +217,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             if (_imageDisplayLateral == value) return;
             _imageDisplayLateral = value;
-            OnPropertyChanged(nameof(ImageDisplayFrontal));
+            OnPropertyChanged();
         }
     }
 
@@ -199,7 +228,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             if (_classificationResultsText == value) return;
             _classificationResultsText = value;
-            OnPropertyChanged(nameof(ClassificationResultsText));
+            OnPropertyChanged();
         }
     }
 
@@ -231,6 +260,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         var newPath = await DicomConverter.Dicom2Nifti(FileNameFrontal);
         ConvertFrontalInProgress = false;
         FileNameFrontal = newPath;
+        CheckFileFormats();
         
         // Load and display image
         // var bitmap = await ImageUtil.LoadNiftiToBitmap(newPath);
@@ -244,6 +274,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         var newPath = await DicomConverter.Dicom2Nifti(FileNameLateral);
         ConvertLateralInProgress = false;
         FileNameLateral = newPath;
+        CheckFileFormats();
         
         // Load and display image
         // var bitmap = await ImageUtil.LoadNiftiToBitmap(newPath);
@@ -252,7 +283,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     
     private async void StartClassificationOnClick()
     {
-        // TODO Check if paths are valid and everything is converted and set
+        // TODO Check if paths are valid and everything is converted and set, and only then enable the button
         ClassificationInProgress = true;
         var response = await AiServiceCommunication.ClassifySequence(FileNameFrontal, FileNameLateral);
         ClassificationInProgress = false;
@@ -273,12 +304,18 @@ public class MainWindowViewModel : INotifyPropertyChanged
             {
                 // TODO: Display green icon
                 ConvertFrontalEnabled = false;
+                FileFrontalValid = true;
             }
             else
             {
                 // TODO: Do proper check
                 ConvertFrontalEnabled = true;
+                FileFrontalValid = false;
             }
+        }
+        else
+        {
+            FileFrontalValid = false;
         }
 
         if (FileNameLateral != null)
@@ -286,22 +323,28 @@ public class MainWindowViewModel : INotifyPropertyChanged
             if (FileNameLateral.EndsWith(".nii"))
             {
                 ConvertLateralEnabled = false;
+                FileLateralValid = true;
             }
             else
             {
                 ConvertLateralEnabled = true;
+                FileLateralValid = false;
             }
         }
-
-        // TODO: Change to proper status and enable StartClassification
+        else
+        {
+            FileLateralValid = false;
+        }
     }
 
     private async void PreloadModels()
     {
-        StartClassificationEnabled = false;
+        ModelsPrepared = false;
         ClassificationInProgress = true;
+        ClassificationResultsText = "Initializing models...";
         await AiServiceCommunication.PreloadModels();
-        StartClassificationEnabled = true;
+        ClassificationResultsText = "";
+        ModelsPrepared = true;
         ClassificationInProgress = false;
     }
 }
