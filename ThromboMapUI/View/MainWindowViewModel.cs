@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Microsoft.Win32;
 using Services.AiService;
 using Services.FileUtils;
@@ -264,8 +265,9 @@ public class MainWindowViewModel : INotifyPropertyChanged
         CheckFileFormats();
         
         // Load and display image
-        // var bitmap = await ImageUtil.LoadNiftiToBitmap(newPath);
-        // ImageDisplayFrontal = bitmap;
+        // Configure Await to get the image in the same thread context as we are right now
+        var image = await ImageUtil.LoadNiftiToImage(newPath).ConfigureAwait(false);
+        ImageDisplayFrontal = image;
     }
 
     private async void ConvertLateralOnClick()
@@ -278,8 +280,8 @@ public class MainWindowViewModel : INotifyPropertyChanged
         CheckFileFormats();
         
         // Load and display image
-        // var bitmap = await ImageUtil.LoadNiftiToBitmap(newPath);
-        // ImageDisplayLateral = bitmap;
+        var bitmap = await ImageUtil.LoadNiftiToImage(newPath).ConfigureAwait(false);
+        ImageDisplayLateral = bitmap;
     }
     
     private async void StartClassificationOnClick()
@@ -340,6 +342,17 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
     private async void PreloadModels()
     {
+        // byte[] data = Convert.FromBase64String("tbBytes.Text");
+        // BitmapImage biImg = new BitmapImage();
+        // MemoryStream ms = new MemoryStream(data);
+        // biImg.BeginInit();
+        // biImg.StreamSource = ms;
+        // biImg.EndInit();
+        //
+        // ImageSource imgSrc = biImg;
+        // ImageDisplayFrontal = imgSrc;
+        
+        
         ModelsPrepared = false;
         ClassificationInProgress = true;
         ClassificationResultsText = "Initializing models...";
