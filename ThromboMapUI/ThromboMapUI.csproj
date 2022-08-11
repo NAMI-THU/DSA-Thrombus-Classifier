@@ -11,11 +11,21 @@
       <PackageReference Include="MaterialDesignThemes" Version="4.5.0" />
       <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
       <PackageReference Include="Nifti.NET" Version="1.1.4" />
-      <PackageReference Include="SimpleITK-win64-CSharp-x64" Version="1.0.0.1" />
+      <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Services\Services.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Reference Include="SimpleITKCSharpManaged">
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="SimpleITKCSharpNative.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 </Project>
