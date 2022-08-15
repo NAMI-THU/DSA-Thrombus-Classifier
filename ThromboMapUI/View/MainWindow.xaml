@@ -14,7 +14,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         mc:Ignorable="d"
-        Title="Thrombomap" Height="400" Width="600">
+        Title="Thrombomap" Height="800" Width="1024">
     <Window.DataContext>
         <view:MainWindowViewModel/>
     </Window.DataContext>
@@ -36,33 +36,12 @@
             </Grid.RowDefinitions>
             
             <Grid.ColumnDefinitions >
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="100px"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             
-            <Button Grid.Row="0" Grid.Column="0" Margin="10" Command="{Binding BrowseFrontalCommand}">Browse Frontal</Button>
-            <Button Grid.Row="0" Grid.Column="1" Margin="10" 
-                    Command="{Binding ConvertFrontalCommand}"
-                    IsEnabled="{Binding ConvertFrontalEnabled}"
-                    Style="{StaticResource MaterialDesignRaisedLightButton}"
-                    materialDesign:ButtonProgressAssist.Value="-1"
-                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ConvertFrontalInProgress}"
-                    materialDesign:ButtonProgressAssist.IsIndeterminate="True">Convert</Button>
-            <Label Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Content="{Binding FileNameFrontal}"/>
-            <Image Grid.Row="0" Grid.Column="3" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" Source="{Binding ImageDisplayFrontal}"></Image>   
-            
-            <Button Grid.Row="1" Grid.Column="0" Margin="10" Command="{Binding BrowseLateralCommand}">Browse Lateral</Button>
-            <Button Grid.Row="1" Grid.Column="1" Margin="10" 
-                    Command="{Binding ConvertLateralCommand}"
-                    IsEnabled="{Binding ConvertLateralEnabled}"
-                    Style="{StaticResource MaterialDesignRaisedLightButton}"
-                    materialDesign:ButtonProgressAssist.Value="-1"
-                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ConvertLateralInProgress}"
-                    materialDesign:ButtonProgressAssist.IsIndeterminate="True">Convert</Button>
-            <Label Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Content="{Binding FileNameLateral}"/>  
-            <Image Grid.Row="1" Grid.Column="3" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" Source="{Binding ImageDisplayLateral}"></Image>
+            <view:NiftiView Grid.Row="0" Grid.Column="0" Margin="10" ImageName="Frontal"></view:NiftiView>
+            <view:NiftiView Grid.Row="0" Grid.Column="1" Margin="10" ImageName="Lateral"></view:NiftiView>
             
             <Button Grid.Row="2" Grid.Column="0" Margin="10"   
                     Style="{StaticResource MaterialDesignFloatingActionSecondaryLightButton}"
@@ -72,7 +51,7 @@
                     materialDesign:ButtonProgressAssist.IsIndeterminate="True"
                     Content="{materialDesign:PackIcon RobotExcited}"
                     Command="{Binding StartClassificationCommand}"/>
-            <Label Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Content="{Binding ClassificationResultsText}"/> 
+            <Label Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Content="{Binding ClassificationResultsText}"/> 
         </Grid>
     </StackPanel>
 </Window>
