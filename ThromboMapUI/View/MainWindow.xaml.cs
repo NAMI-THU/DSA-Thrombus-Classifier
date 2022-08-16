@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Nifti.NET;
+using ThromboMapUI.View;
 
 namespace ThromboMapUI
 {
@@ -24,6 +25,9 @@ namespace ThromboMapUI
         public MainWindow()
         {
             InitializeComponent();
+            var vm = (MainWindowViewModel)DataContext;
+            FrontalNiftiView.FilePreparedNotificationCommand = vm.FrontalPreparedNotification;
+            LateralNiftiView.FilePreparedNotificationCommand = vm.LateralPreparedNotification;
         }
     }
 }
