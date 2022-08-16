@@ -6,7 +6,6 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:view="clr-namespace:ThromboMapUI.View"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:wpf1="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="ExtraLight"
         TextElement.FontSize="12"
@@ -15,7 +14,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         mc:Ignorable="d"
-        Title="Thrombomap" Height="1024" Width="1500">
+        Title="Thrombomap" Height="1024" Width="1100">
     <Window.DataContext>
         <view:MainWindowViewModel/>
     </Window.DataContext>
@@ -24,147 +23,140 @@
             <b:InvokeCommandAction Command="{Binding WindowLoadedCommand}" />
         </b:EventTrigger>
     </b:Interaction.Triggers>
-    <StackPanel Orientation="Vertical">
-        <TextBlock
-            Style="{StaticResource MaterialDesignHeadline2TextBlock}"
-            Text="Thrombomap" Margin="20" HorizontalAlignment="Center"/>
-        <Grid Margin="20">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            
-            <Grid.ColumnDefinitions >
-                <ColumnDefinition Width="*" MinWidth="500px"/>
-                <ColumnDefinition Width="*" MinWidth="500px"/>
-            </Grid.ColumnDefinitions>
-            
-            <view:NiftiView Grid.Row="0" Grid.Column="0" Margin="10" ImageName="Frontal" x:Name="FrontalNiftiView" MaxHeight="800px" MaxWidth="800px"></view:NiftiView>
-            <view:NiftiView Grid.Row="0" Grid.Column="1" Margin="10" ImageName="Lateral" x:Name="LateralNiftiView" MaxHeight="800px" MaxWidth="800px"></view:NiftiView>
-            
-            <Separator Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="10" />
-            
-            <StackPanel Grid.Row="2" Grid.Column="0" Margin="10">
-                <TextBlock
-                    Margin="0,0,0,20" HorizontalAlignment="Center"
-                    Style="{StaticResource MaterialDesignHeadline4TextBlock}"
-                    Text="Classification" />
-                <materialDesign:Badged HorizontalAlignment="Center" Margin="20"
-                    Badge="{materialDesign:PackIcon Alert}"
-                    BadgeColorZoneMode="SecondaryMid">
-                    <Button Command="{Binding BrowseModelFolderCommand}">Select Model Folder</Button>
-                </materialDesign:Badged>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <ListBox Margin="20" 
-                        Style="{StaticResource MaterialDesignFilterChipListBox}">
-                        <ListBoxItem
-                            IsSelected="True"
-                            Content="Model 1" />
-                        <ListBoxItem
-                            IsSelected="True"
-                            Content="Model 2" />
-                        <ListBoxItem
-                            IsSelected="True"
-                            Content="Model 3" />
-                        <ListBoxItem
-                            IsSelected="True"
-                            Content="Model 4" />
-                    </ListBox>                
-                    <Button
-                          Style="{StaticResource MaterialDesignFloatingActionLightButton}"
-                          Margin="8 0 0 0"
-                          Command="{Binding StartClassificationCommand}"
-                          materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ClassificationInProgress}"
-                          materialDesign:ButtonProgressAssist.IsIndeterminate="True"
-                          IsEnabled="{Binding StartClassificationEnabled}">
-                          <!-- simple example of toggling/animating pack icon with a data trigger-->
-                          <!-- materialDesign:ButtonProgressAssist.Value="{Binding SaveProgress}" -->
-                          <materialDesign:PackIcon
-                              Height="24"
-                              Width="24">
-                              <materialDesign:PackIcon.Style>
-                                  <Style
-                                      TargetType="materialDesign:PackIcon"
-                                      BasedOn="{StaticResource {x:Type materialDesign:PackIcon}}">
-                                      <Setter
-                                          Property="Kind"
-                                          Value="CloudSync" />
-                                      <Style.Triggers>
-                                          <DataTrigger
-                                              Binding="{Binding AiClassificationDone}"
-                                              Value="True">
-                                              <Setter
-                                                  Property="Kind"
-                                                  Value="CloudCheck" />
-                                              <DataTrigger.EnterActions>
-                                                  <BeginStoryboard>
-                                                      <Storyboard>
-                                                          <DoubleAnimation
-                                                              Storyboard.TargetProperty="Opacity"
-                                                              From="0"
-                                                              To="1"
-                                                              Duration="0:0:0.8" />
-                                                      </Storyboard>
-                                                  </BeginStoryboard>
-                                              </DataTrigger.EnterActions>
-                                          </DataTrigger>
-                                      </Style.Triggers>
-                                  </Style>
-                              </materialDesign:PackIcon.Style>
-                          </materialDesign:PackIcon>
-                      </Button>
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <StackPanel Orientation="Vertical">
+            <TextBlock
+                Style="{StaticResource MaterialDesignHeadline2TextBlock}"
+                Text="Thrombomap" Margin="20" HorizontalAlignment="Center"/>
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <Grid.ColumnDefinitions >
+                    <ColumnDefinition Width="*" MinWidth="500px"/>
+                    <ColumnDefinition Width="*" MinWidth="500px"/>
+                </Grid.ColumnDefinitions>
+                
+                <view:NiftiView Grid.Row="0" Grid.Column="0" Margin="10" ImageName="Frontal" x:Name="FrontalNiftiView" MaxHeight="800px" MaxWidth="800px"></view:NiftiView>
+                <view:NiftiView Grid.Row="0" Grid.Column="1" Margin="10" ImageName="Lateral" x:Name="LateralNiftiView" MaxHeight="800px" MaxWidth="800px"></view:NiftiView>
+                
+                <Separator Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="10" />
+                
+                <StackPanel Grid.Row="2" Grid.Column="0" Margin="10">
+                    <TextBlock
+                        Margin="0,0,0,20" HorizontalAlignment="Center"
+                        Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+                        Text="Classification" />
+                    <materialDesign:Badged HorizontalAlignment="Center" Margin="20"
+                        Badge="{Binding ModelSelectionFolderBadge}"
+                        BadgeColorZoneMode="SecondaryMid">
+                        <Button Command="{Binding BrowseModelFolderCommand}">Select Model Folder</Button>
+                    </materialDesign:Badged>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <ListBox Margin="20" 
+                            Style="{StaticResource MaterialDesignFilterChipListBox}">
+                            <ListBoxItem
+                                IsSelected="True"
+                                Content="Model 1" />
+                            <ListBoxItem
+                                IsSelected="True"
+                                Content="Model 2" />
+                            <ListBoxItem
+                                IsSelected="True"
+                                Content="Model 3" />
+                            <ListBoxItem
+                                IsSelected="True"
+                                Content="Model 4" />
+                        </ListBox>                
+                        <Button
+                              Style="{StaticResource MaterialDesignFloatingActionLightButton}"
+                              Margin="8 0 0 0"
+                              Command="{Binding StartClassificationCommand}"
+                              materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ClassificationInProgress}"
+                              materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                              materialDesign:ButtonProgressAssist.Minimum="0"
+                              materialDesign:ButtonProgressAssist.Maximum="1"
+                              materialDesign:ButtonProgressAssist.Value="{Binding ClassificationProgressPercentage}"
+                              IsEnabled="{Binding StartClassificationEnabled}">
+                              <materialDesign:PackIcon
+                                  Height="24"
+                                  Width="24">
+                                  <materialDesign:PackIcon.Style>
+                                      <Style
+                                          TargetType="materialDesign:PackIcon"
+                                          BasedOn="{StaticResource {x:Type materialDesign:PackIcon}}">
+                                          <Setter
+                                              Property="Kind"
+                                              Value="CloudSync" />
+                                          <Style.Triggers>
+                                              <DataTrigger
+                                                  Binding="{Binding AiClassificationDone}"
+                                                  Value="True">
+                                                  <Setter
+                                                      Property="Kind"
+                                                      Value="CloudCheck" />
+                                                  <DataTrigger.EnterActions>
+                                                      <BeginStoryboard>
+                                                          <Storyboard>
+                                                              <DoubleAnimation
+                                                                  Storyboard.TargetProperty="Opacity"
+                                                                  From="0"
+                                                                  To="1"
+                                                                  Duration="0:0:0.8" />
+                                                          </Storyboard>
+                                                      </BeginStoryboard>
+                                                  </DataTrigger.EnterActions>
+                                              </DataTrigger>
+                                          </Style.Triggers>
+                                      </Style>
+                                  </materialDesign:PackIcon.Style>
+                              </materialDesign:PackIcon>
+                          </Button>
+                    </StackPanel>
+                    <Slider Margin="30"
+                            IsEnabled="False"
+                            TickFrequency="0.05"
+                            Orientation="Horizontal"
+                            TickPlacement="BottomRight"
+                            Minimum="0"
+                            Maximum="1"
+                            IsSnapToTickEnabled="False"
+                            Value="{Binding AiClassificationOutcomeCombined}" 
+                            AutoToolTipPlacement="BottomRight"
+                            SelectionStart="{Binding AiClassificationThreshold}"
+                            SelectionEnd="1"
+                            IsSelectionRangeEnabled="True" />
+                    <TextBlock
+                        Style="{StaticResource MaterialDesignHeadline4TextBlock}" Foreground="{Binding ClassificationResultColor}" HorizontalAlignment="Center"
+                        Text="{Binding ClassificationResultText}" />
                 </StackPanel>
-                <Slider Margin="30"
-                        IsEnabled="False"
-                        TickFrequency="0.05"
-                        Orientation="Horizontal"
-                        TickPlacement="BottomRight"
+                <StackPanel Grid.Row="2" Grid.Column="1" Margin="10">
+                    <TextBlock
+                        Margin="0,0,0,20" HorizontalAlignment="Center"
+                        Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+                        Text="Threshold / ROC" />
+                    <Slider
+                        Margin="20"
                         Minimum="0"
                         Maximum="1"
+                        Value="{Binding AiClassificationThreshold}"
+                        Style="{StaticResource MaterialDesignDiscreteSlider}"
+                        TickFrequency="0.05"
                         IsSnapToTickEnabled="False"
-                        Value="{Binding AiClassificationOutcomeCombined}" 
-                        AutoToolTipPlacement="BottomRight"
-                        SelectionStart="{Binding AiClassificationThreshold}"
-                        SelectionEnd="1"
-                        IsSelectionRangeEnabled="True" />
-                <TextBlock
-                    Style="{StaticResource MaterialDesignHeadline4TextBlock}" Foreground="{Binding ClassificationResultColor}" HorizontalAlignment="Center"
-                    Text="{Binding ClassificationResultText}" />
-            </StackPanel>
-            <StackPanel Grid.Row="2" Grid.Column="1" Margin="10">
-                <TextBlock
-                    Margin="0,0,0,20" HorizontalAlignment="Center"
-                    Style="{StaticResource MaterialDesignHeadline4TextBlock}"
-                    Text="Threshold / ROC" />
-                <Slider
-                    Margin="20"
-                    Minimum="0"
-                    Maximum="1"
-                    Value="{Binding AiClassificationThreshold}"
-                    Style="{StaticResource MaterialDesignDiscreteSlider}"
-                    TickFrequency="0.05"
-                    IsSnapToTickEnabled="False"
-                    TickPlacement="BottomRight" />
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <materialDesign:Chip
-                    Content="5"
-                    Icon="FP" />
-                <materialDesign:Chip
-                    Content="56"
-                    Icon="FN" />
+                        TickPlacement="BottomRight" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <materialDesign:Chip
+                        Content="5"
+                        Icon="FP" />
+                    <materialDesign:Chip
+                        Content="56"
+                        Icon="FN" />
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
-            
-            <!-- <Button Grid.Row="2" Grid.Column="0" Margin="10"    -->
-            <!--         Style="{StaticResource MaterialDesignFloatingActionSecondaryLightButton}" -->
-            <!--         IsEnabled="{Binding StartClassificationEnabled}" -->
-            <!--         materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ClassificationInProgress}" -->
-            <!--         materialDesign:ButtonProgressAssist.Value="-1" -->
-            <!--         materialDesign:ButtonProgressAssist.IsIndeterminate="True" -->
-            <!--         Content="{materialDesign:PackIcon RobotExcited}" -->
-            <!--         Command="{Binding StartClassificationCommand}"/> -->
-            <!-- <Label Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Content="{Binding ClassificationResultsText}"/>  -->
-        </Grid>
-    </StackPanel>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
 </Window>

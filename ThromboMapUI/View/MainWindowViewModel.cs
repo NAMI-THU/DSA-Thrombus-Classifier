@@ -1,10 +1,19 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using MaterialDesignThemes.Wpf;
+using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Services.AiService;
+using Services.AiService.Responses;
 
 namespace ThromboMapUI.View;
 
@@ -21,8 +30,9 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private RelayCommand<object>? _windowLoadedCommand;
     private RelayCommand<string>? _frontalPreparedNotification;
     private RelayCommand<string>? _lateralPreparedNotification;
-    private string? _fileNameFrontal;// = @"C:\Users\Timo\Documents\GitHub\DSA_CNN_Demonstrator\Python-SourceCode\images\thrombYes\263-01-aci-l-f.nii";
-    private string? _fileNameLateral;// = @"C:\Users\Timo\Documents\GitHub\DSA_CNN_Demonstrator\Python-SourceCode\images\thrombYes\263-01-aci-l-s.nii";
+    private RelayCommand<object>? _browseModelFolderCommand;
+    private string? _fileNameFrontal;
+    private string? _fileNameLateral;
     private bool _classificationInProgress;
     private string _classificationResultsText = "Not run yet.";
     private bool _modelsPrepared;
@@ -31,19 +41,17 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private double _aiClassificationThreshold = 0.5;
     private string _classificationResultText;
     private SolidColorBrush _classificationResultColor;
-    private double _avgModelOutcome;
+    private string _modelSelectionFolder;
+    private PackIcon _modelSelectionFolderBadge = new(){Kind = PackIconKind.Alert};
+    private double _classificationProgressPercentage;
 
-    public double AvgModelOutcome
-    {
-        get => _avgModelOutcome;
-        set
+
+    public ICommand BrowseModelFolderCommand{
+        get
         {
-            if (value.Equals(_avgModelOutcome)) return;
-            _avgModelOutcome = value;
-            OnPropertyChanged();
+            return _browseModelFolderCommand ??= new RelayCommand<object>(s => OnBrowseModelFolderClicked());
         }
     }
-
 
     public ICommand FrontalPreparedNotification
     {
@@ -70,7 +78,8 @@ public class MainWindowViewModel : INotifyPropertyChanged
     {
         get
         {
-            return _windowLoadedCommand ??= new RelayCommand<object>(p=>PreloadModels(), a=>true); 
+            return _windowLoadedCommand ??= new RelayCommand<object>(_ => {});
+            // return _windowLoadedCommand ??= new RelayCommand<object>(p=>PreloadModels(), a=>true); 
         }
     }
 
@@ -182,6 +191,17 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
+    public PackIcon ModelSelectionFolderBadge
+    {
+        get => _modelSelectionFolderBadge;
+        set
+        {
+            if (Equals(value, _modelSelectionFolderBadge)) return;
+            _modelSelectionFolderBadge = value;
+            OnPropertyChanged();
+        }
+    }
+
     public string ClassificationResultText
     {
         get => _classificationResultText;
@@ -204,21 +224,75 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
+    public double ClassificationProgressPercentage
+    {
+        get => _classificationProgressPercentage;
+        set
+        {
+            if (value.Equals(_classificationProgressPercentage)) return;
+            _classificationProgressPercentage = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private void OnBrowseModelFolderClicked()
+    {
+        var dialog = new CommonOpenFileDialog
+        {
+            IsFolderPicker = true
+        };
+        if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+        {
+            ModelSelectionFolder = dialog.FileName;
+            // TODO: Proper validation of folder contents
+            ModelSelectionFolderBadge = new() { Kind = PackIconKind.Check };
+            PreloadModels();
+        }
+    }
+
+    public string ModelSelectionFolder
+    {
+        get => _modelSelectionFolder;
+        set
+        {
+            if (value == _modelSelectionFolder) return;
+            _modelSelectionFolder = value;
+            OnPropertyChanged();
+        }
+    }
+
     private async void StartClassificationOnClick()
     {
         // TODO Check if paths are valid and everything is converted and set, and only then enable the button
         ClassificationInProgress = true;
-        var response = await AiServiceCommunication.ClassifySequence(FileNameFrontal, FileNameLateral);
+
+        //var modelFolders = Directory.GetDirectories(ModelSelectionFolder);
+        var responses = new List<ClassificationResponse>();
+        var frontals = Path.Join(ModelSelectionFolder, "frontal");
+        var models = Directory.GetFiles(frontals);
+        foreach(var model in models)
+        {
+            var modelName = Path.GetFileName(model);
+            double currentCount = 0;
+            var total = models.Length;
+            ClassificationProgressPercentage = -1;
+            var response = await AiServiceCommunication.ClassifySequence(modelName, modelName, FileNameFrontal, FileNameLateral);
+            responses.Add(response);
+            currentCount++;
+            ClassificationProgressPercentage = currentCount / total;
+        }
+        
         ClassificationInProgress = false;
         AiClassificationDone = true;
-        ClassificationResultsText = $"Frontal: {string.Join(", ", response.OutputFrontal)} | Lateral: {string.Join(", ", response.OutputLateral)}";
-        AiClassificationOutcomeCombined = CalculateCombinedResult(response.OutputFrontal, response.OutputLateral);
+        //ClassificationResultsText = $"Frontal: {string.Join(", ", response.OutputFrontal)} | Lateral: {string.Join(", ", response.OutputLateral)}";
+        AiClassificationOutcomeCombined = CalculateCombinedResult(responses);
     }
 
-    private double CalculateCombinedResult(float[]? frontals, float[]? laterals)
+    private double CalculateCombinedResult(List<ClassificationResponse> responses)
     {
-        var avgF = frontals.Sum() / frontals.Length;
-        var avgL = laterals.Sum() / laterals.Length;
+        // TODO: Average isn't working yet + is wrong
+        var avgF = responses.Sum(r => r.OutputFrontal.Sum()) / (responses.Count/2);
+        var avgL = responses.Sum(r => r.OutputLateral.Sum()) / (responses.Count / 2);
         return (avgF + avgL) / 2;
     }
 
@@ -227,7 +301,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         ModelsPrepared = false;
         ClassificationInProgress = true;
         ClassificationResultsText = "Initializing models...";
-        await AiServiceCommunication.PreloadModels();
+        await AiServiceCommunication.PreloadModels(ModelSelectionFolder);
         ClassificationResultsText = "";
         ModelsPrepared = true;
         ClassificationInProgress = false;
