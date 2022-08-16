@@ -26,14 +26,17 @@ class Classificator:
     def __init__(self):
         torch.set_num_threads(8)
         self.models_loaded = False
-        self.models_frontal = []
-        self.models_lateral = []
+        self.models_frontal = {}
+        self.models_lateral = {}
 
-    def load_models(self):
-        MODEL_F = "models\\frontal"
+    def load_models(self, folder="models"):
+        MODEL_F = os.path.join(folder, "frontal")
+        MODEL_L = os.path.join(folder, "lateral")
+
+        #MODEL_F = "models\\frontal"
         # MODEL_F = "models\\model_frontal.pt"
         # MODEL_L = "models\\model_lateral.pt"
-        MODEL_L = "models\\lateral"
+        #MODEL_L = "models\\lateral"
 
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         print(f"Running on {device}")
@@ -41,38 +44,42 @@ class Classificator:
         # Load Checkpoints:
         dir_list_f = os.listdir(MODEL_F)
         dir_list_l = os.listdir(MODEL_L)
-        checkpoints_frontal = []
-        checkpoints_lateral = []
-        for m_f in dir_list_f:
-            m_f = os.path.join(MODEL_F,m_f)
-            checkpoints_frontal.append(torch.load(m_f, map_location=device))
-        for m_l in dir_list_l:
-            m_l = os.path.join(MODEL_L, m_l)
-            checkpoints_lateral.append(torch.load(m_l, map_location=device))
+        # checkpoints_frontal = []
+        # checkpoints_lateral = []
+        # for m_f in dir_list_f:
+        #     m_f = os.path.join(MODEL_F,m_f)
+        #     checkpoints_frontal.append(torch.load(m_f, map_location=device))
+        # for m_l in dir_list_l:
+        #     m_l = os.path.join(MODEL_L, m_l)
+        #     checkpoints_lateral.append(torch.load(m_l, map_location=device))
 
         # Initialize model for frontal images:
         # model_frontal = models.resnet152()
         # model_frontal.conv1 = torch.nn.Conv2d(62, 64, kernel_size=7, stride=2, padding=3, bias=False)
         # model_frontal.fc = torch.nn.Linear(model_frontal.fc.in_features, 1)
         # model_frontal = LSTMModel(1024*1024, 50, 2, 1, True)
-        for m_f in checkpoints_frontal:
+        for m_f_orig in dir_list_f:
+            m_f = os.path.join(MODEL_F, m_f_orig)
             model_frontal = CnnLstmModel(512, 3, 1, True, device)
+            checkpoint = torch.load(m_f, map_location=device)
             # model_frontal = torch.nn.DataParallel(model_frontal)
-            model_frontal.load_state_dict(m_f['model_state_dict'])
+            model_frontal.load_state_dict(checkpoint['model_state_dict'])
             model_frontal.to(device)
-            self.models_frontal.append(model_frontal)
+            self.models_frontal[m_f_orig] = model_frontal
 
         # Initialize model for lateral images:
         # model_lateral = models.resnet152()
         # model_lateral.conv1 = torch.nn.Conv2d(62, 64, kernel_size=7, stride=2, padding=3, bias=False)
         # model_lateral.fc = torch.nn.Linear(model_lateral.fc.in_features, 1)
         # model_lateral = LSTMModel(1024*1024, 50, 2, 1, True)
-        for m_l in checkpoints_lateral:
+        for m_l_orig in dir_list_l:
+            m_l = os.path.join(MODEL_L, m_l_orig)
             model_lateral = CnnLstmModel(512, 3, 1, True, device)
+            checkpoint = torch.load(m_l, map_location=device)
             # model_lateral = torch.nn.DataParallel(model_lateral)
-            model_lateral.load_state_dict(m_l['model_state_dict'])
+            model_lateral.load_state_dict(checkpoint['model_state_dict'])
             model_lateral.to(device)
-            self.models_lateral.append(model_lateral)
+            self.models_lateral[m_l_orig] = model_lateral
 
         self.models_loaded = True
 
@@ -108,7 +115,7 @@ class Classificator:
 
         return augmentation.convertToTensor()
 
-    def do_classification(self, image_frontal, image_lateral):
+    def do_classification(self, image_frontal, image_lateral, mf="", ml=""):
         t0 = time.time()
 
         if not self.models_loaded:
@@ -137,23 +144,37 @@ class Classificator:
         estimates_lateral = []
         global_goal = len(self.models_frontal) + len(self.models_lateral)
         current_progress = 0
-        for m_f in self.models_frontal:
-            output_frontal = m_f(images_frontal)
+        if mf == "":
+            for m_f in self.models_frontal:
+                output_frontal = m_f(images_frontal)
+                activation_f = torch.sigmoid(output_frontal).item()
+                estimate_frontal = THROMBUS_NO if activation_f <= 0.5 else THROMBUS_YES
+                outputs_frontal.append(activation_f)
+                estimates_frontal.append(estimate_frontal)
+                current_progress += 1
+                print(f"Progress: {current_progress}/{global_goal} ({current_progress*100/global_goal}%)")
+        else:
+            output_frontal = self.models_frontal[mf](images_frontal)
             activation_f = torch.sigmoid(output_frontal).item()
             estimate_frontal = THROMBUS_NO if activation_f <= 0.5 else THROMBUS_YES
             outputs_frontal.append(activation_f)
             estimates_frontal.append(estimate_frontal)
-            current_progress += 1
-            print(f"Progress: {current_progress}/{global_goal} ({current_progress*100/global_goal}%)")
-        for m_l in self.models_lateral:
-            output_lateral = m_l(images_lateral)
+
+        if ml == "":
+            for m_l in self.models_lateral:
+                output_lateral = m_l(images_lateral)
+                activation_l = torch.sigmoid(output_lateral).item()
+                estimate_lateral = THROMBUS_NO if activation_l <= 0.5 else THROMBUS_YES
+                outputs_lateral.append(activation_l)
+                estimates_lateral.append(estimate_lateral)
+                current_progress += 1
+                print(f"Progress: {current_progress}/{global_goal} ({current_progress * 100 / global_goal}%)")
+        else:
+            output_lateral = self.models_lateral[ml](images_lateral)
             activation_l = torch.sigmoid(output_lateral).item()
             estimate_lateral = THROMBUS_NO if activation_l <= 0.5 else THROMBUS_YES
             outputs_lateral.append(activation_l)
             estimates_lateral.append(estimate_lateral)
-            current_progress += 1
-            print(f"Progress: {current_progress}/{global_goal} ({current_progress * 100 / global_goal}%)")
-
         t3 = time.time()
         del images_frontal
         del images_lateral

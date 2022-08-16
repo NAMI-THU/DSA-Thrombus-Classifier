@@ -10,14 +10,16 @@ app = Flask(__name__)
 classificator = Classificator.Classificator()
 
 
-@app.route("/AiService/PreloadModels")
+@app.route("/AiService/PreloadModels", methods=["POST"])
 def prepare_models_requested():
     print("Preloading of models requested...")
+    folder = request.get_json()["Directory"]
+    # Todo: Ignore this
     if classificator.models_loaded:
         print("Models have already been loaded before.")
         return flask.Response(status=200)
 
-    classificator.load_models()
+    classificator.load_models(folder)
     print("Loading of models done.")
     return flask.Response(status=200)
 
@@ -28,10 +30,12 @@ def classification_requested():
     content = request.get_json()
     path_frontal = content["PathFrontal"]
     path_lateral = content["PathLateral"]
+    model_frontal = content["ModelFrontal"]
+    model_lateral = content["ModelLateral"]
     if not path_frontal or not os.path.exists(path_frontal) or not path_lateral or not os.path.exists(path_lateral):
         print("At least one of the requested paths does not exist.")
         return flask.Response(status=400)
-    activations_f, activations_l, estimates_f, estimates_l = classificator.do_classification(path_frontal, path_lateral)
+    activations_f, activations_l, estimates_f, estimates_l = classificator.do_classification(path_frontal, path_lateral, model_frontal, model_lateral)
     result = {'OutputFrontal': activations_f, 'OutputLateral': activations_l}
     print("Classification done.")
     return json.dumps(result)
