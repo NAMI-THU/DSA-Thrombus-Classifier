@@ -38,6 +38,8 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
         InitializeComponent();
     }
 
+    public ICommand FilePreparedNotificationCommand { get; set; }
+
     public ImageSource ImageDisplay
     {
         get => _imageDisplay;
@@ -104,6 +106,7 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
             {
                 HeaderColor = new SolidColorBrush(new PaletteHelper().GetTheme().PrimaryDark.Color);
                 HeaderIcon = PackIconKind.Check;
+                FilePreparedNotificationCommand.Execute(FileName);
             }
             OnPropertyChanged();
         }
@@ -122,7 +125,7 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
 
     public Brush HeaderColor
     {
-        get => _headerColor ;
+        get => _headerColor;
         set
         {
             if (Equals(value, _headerColor))  return;

@@ -24,22 +24,15 @@
                 <StackPanel
                     Orientation="Horizontal">
                     <materialDesign:PackIcon
-                        Kind="FolderAlertOutline"
+                        Kind="{Binding DataContext.HeaderIcon, RelativeSource={RelativeSource AncestorType=GroupBox}}"
                         Height="32"
                         Width="32"
-                        VerticalAlignment="Center" 
-                        Visibility="{Binding !FilePrepared, Converter={StaticResource InverseBoolToVisConverter}}" />
-                    <materialDesign:PackIcon
-                        Kind="FolderCheckOutline"
-                        Height="32"
-                        Width="32"
-                        VerticalAlignment="Center" 
-                        Visibility="{Binding FilePrepared, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        VerticalAlignment="Center"/>
                     <TextBlock
                         Margin="8,0,0,0"
                         VerticalAlignment="Center"
                         Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-                        Text="{Binding ImageName}" />
+                        Text="{Binding DataContext.ImageName, RelativeSource={RelativeSource AncestorType=GroupBox}}" />
                 </StackPanel>
             </DataTemplate>
         </GroupBox.HeaderTemplate>
