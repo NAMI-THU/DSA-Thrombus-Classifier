@@ -13,6 +13,7 @@ using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Services.AiService;
+using Services.AiService.Interpreter;
 using Services.AiService.Responses;
 
 namespace ThromboMapUI.View;
@@ -44,6 +45,9 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private string _modelSelectionFolder;
     private PackIcon _modelSelectionFolderBadge = new(){Kind = PackIconKind.Alert};
     private double _classificationProgressPercentage;
+
+    // Is that so good? We might fail here in the constructor
+    private ResultInterpreter _resultInterpreter = new();
 
 
     public ICommand BrowseModelFolderCommand{
@@ -166,7 +170,8 @@ public class MainWindowViewModel : INotifyPropertyChanged
             
             OnPropertyChanged();
             
-            if (value >= AiClassificationThreshold)
+            // TODO: Not quite right yet
+            if (_resultInterpreter.HasThrombus(value))
             {
                 ClassificationResultText = "Thrombus detected!";
                 ClassificationResultColor = Brushes.DarkRed;
@@ -186,6 +191,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             if (value.Equals(_aiClassificationThreshold)) return;
             _aiClassificationThreshold = value;
+            _resultInterpreter.Threshold = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(AiClassificationOutcomeCombined));
         }

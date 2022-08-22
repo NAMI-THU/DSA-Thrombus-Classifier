@@ -36,8 +36,8 @@
                 </Grid.RowDefinitions>
                 
                 <Grid.ColumnDefinitions >
-                    <ColumnDefinition Width="*" MinWidth="500px"/>
-                    <ColumnDefinition Width="*" MinWidth="500px"/>
+                    <ColumnDefinition Width="*" MinWidth="300px"/>
+                    <ColumnDefinition Width="*" MinWidth="300px"/>
                 </Grid.ColumnDefinitions>
                 
                 <view:NiftiView Grid.Row="0" Grid.Column="0" Margin="10" ImageName="Frontal" x:Name="FrontalNiftiView" MaxHeight="800px" MaxWidth="800px"></view:NiftiView>
@@ -56,21 +56,21 @@
                         <Button Command="{Binding BrowseModelFolderCommand}">Select Model Folder</Button>
                     </materialDesign:Badged>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <ListBox Margin="20" 
-                            Style="{StaticResource MaterialDesignFilterChipListBox}">
-                            <ListBoxItem
-                                IsSelected="True"
-                                Content="Model 1" />
-                            <ListBoxItem
-                                IsSelected="True"
-                                Content="Model 2" />
-                            <ListBoxItem
-                                IsSelected="True"
-                                Content="Model 3" />
-                            <ListBoxItem
-                                IsSelected="True"
-                                Content="Model 4" />
-                        </ListBox>                
+                        <!-- <ListBox Margin="20"  -->
+                        <!--     Style="{StaticResource MaterialDesignFilterChipListBox}"> -->
+                        <!--     <ListBoxItem -->
+                        <!--         IsSelected="True" -->
+                        <!--         Content="Model 1" /> -->
+                        <!--     <ListBoxItem -->
+                        <!--         IsSelected="True" -->
+                        <!--         Content="Model 2" /> -->
+                        <!--     <ListBoxItem -->
+                        <!--         IsSelected="True" -->
+                        <!--         Content="Model 3" /> -->
+                        <!--     <ListBoxItem -->
+                        <!--         IsSelected="True" -->
+                        <!--         Content="Model 4" /> -->
+                        <!-- </ListBox>                 -->
                         <Button
                               Style="{StaticResource MaterialDesignFloatingActionLightButton}"
                               Margin="8 0 0 0"
