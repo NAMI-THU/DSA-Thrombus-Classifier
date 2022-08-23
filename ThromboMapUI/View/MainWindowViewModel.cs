@@ -190,12 +190,32 @@ public class MainWindowViewModel : INotifyPropertyChanged
         set
         {
             if (value.Equals(_aiClassificationThreshold)) return;
+            value = Math.Round(value, 2);
             _aiClassificationThreshold = value;
             _resultInterpreter.Threshold = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(AiClassificationOutcomeCombined));
+            OnPropertyChanged(nameof(Threshold_TP));
+            OnPropertyChanged(nameof(Threshold_FP));
+            OnPropertyChanged(nameof(Threshold_FN));
+            OnPropertyChanged(nameof(Threshold_TN));
+            
+            OnPropertyChanged(nameof(Accuracy));
+            OnPropertyChanged(nameof(F1Score));
+            OnPropertyChanged(nameof(Precision));
+            OnPropertyChanged(nameof(Recall));
         }
     }
+
+    public string Threshold_TP => _resultInterpreter.TruePositivesPercentage;
+    public string Threshold_FP => _resultInterpreter.FalsePositivesPercentage;
+    public string Threshold_FN => _resultInterpreter.FalseNegativesPercentage;
+    public string Threshold_TN => _resultInterpreter.TrueNegativesPercentage;
+
+    public string Accuracy => _resultInterpreter.AccuracyString;
+    public string F1Score => _resultInterpreter.F1ScoreString;
+    public string Precision => _resultInterpreter.PrecisionString;
+    public string Recall => _resultInterpreter.RecallString;
 
     public PackIcon ModelSelectionFolderBadge
     {
@@ -311,5 +331,17 @@ public class MainWindowViewModel : INotifyPropertyChanged
         ClassificationResultsText = "";
         ModelsPrepared = true;
         ClassificationInProgress = false;
+    }
+
+    private void LoadInterpreter()
+    {
+        _resultInterpreter.LoadData();
+        AiClassificationThreshold = _resultInterpreter.CalculateBestThreshold();
+    }
+
+    public MainWindowViewModel()
+    {
+        // TODO
+        LoadInterpreter();
     }
 }

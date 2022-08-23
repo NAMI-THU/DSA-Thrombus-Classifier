@@ -135,9 +135,13 @@
                 </StackPanel>
                 <StackPanel Grid.Row="2" Grid.Column="1" Margin="10">
                     <TextBlock
-                        Margin="0,0,0,20" HorizontalAlignment="Center"
+                        Margin="0,0,0,10" HorizontalAlignment="Center"
                         Style="{StaticResource MaterialDesignHeadline4TextBlock}"
                         Text="Threshold / ROC" />
+                    <TextBlock
+                        Margin="0,0,0,10" HorizontalAlignment="Center"
+                        Style="{StaticResource MaterialDesignBody1TextBlock}"
+                        Text="{Binding AiClassificationThreshold}" />
                     <Slider
                         Margin="20"
                         Minimum="0"
@@ -147,13 +151,40 @@
                         TickFrequency="0.05"
                         IsSnapToTickEnabled="False"
                         TickPlacement="BottomRight" />
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <materialDesign:Chip
-                        Content="5"
-                        Icon="FP" />
-                    <materialDesign:Chip
-                        Content="56"
-                        Icon="FN" />
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <materialDesign:Chip
+                                Content="{Binding Threshold_TP}"
+                                Icon="TP" />
+                            <materialDesign:Chip
+                                Content="{Binding Threshold_FP}"
+                                Icon="FP" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <materialDesign:Chip
+                                Content="{Binding Threshold_FN}"
+                                Icon="FN" />
+                            <materialDesign:Chip
+                                Content="{Binding Threshold_TN}"
+                                Icon="TN" />
+                        </StackPanel>
+                        <Separator Margin="20"/>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:Chip
+                                Content="Accuracy"
+                                Icon="{Binding Accuracy}" />
+                            <materialDesign:Chip
+                                Content="F1-Score"
+                                Icon="{Binding F1Score}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <materialDesign:Chip
+                                Content="Precision"
+                                Icon="{Binding Precision}" />
+                            <materialDesign:Chip
+                                Content="Recall"
+                                Icon="{Binding Recall}" />
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
             </Grid>
