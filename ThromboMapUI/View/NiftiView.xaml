@@ -46,7 +46,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" Source="{Binding ImageDisplay}" MinHeight="200px" MinWidth="200px"></Image>
+                <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" Source="{Binding ImageDisplay}" MinHeight="200px" MinWidth="200px" MaxHeight="400px" MaxWidth="400px"></Image>
                 <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Content="{Binding FileName}"/>  
                 <Button Grid.Row="2" Grid.Column="0" Margin="10" Command="{Binding BrowseCommand}">Browse</Button>
                 <Button Grid.Row="2" Grid.Column="1" Margin="10" 

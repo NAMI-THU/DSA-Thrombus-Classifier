@@ -290,6 +290,8 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private async void StartClassificationOnClick()
     {
         // TODO Check if paths are valid and everything is converted and set, and only then enable the button
+        // TODO: Make sure, that the folder structure is like this: /frontal/model1.pt .. /lateral/model1.pt
+        // The models must have the same name!
         ClassificationInProgress = true;
 
         //var modelFolders = Directory.GetDirectories(ModelSelectionFolder);
