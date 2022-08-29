@@ -56,21 +56,6 @@
                         <Button Command="{Binding BrowseModelFolderCommand}">Select Model Folder</Button>
                     </materialDesign:Badged>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <!-- <ListBox Margin="20"  -->
-                        <!--     Style="{StaticResource MaterialDesignFilterChipListBox}"> -->
-                        <!--     <ListBoxItem -->
-                        <!--         IsSelected="True" -->
-                        <!--         Content="Model 1" /> -->
-                        <!--     <ListBoxItem -->
-                        <!--         IsSelected="True" -->
-                        <!--         Content="Model 2" /> -->
-                        <!--     <ListBoxItem -->
-                        <!--         IsSelected="True" -->
-                        <!--         Content="Model 3" /> -->
-                        <!--     <ListBoxItem -->
-                        <!--         IsSelected="True" -->
-                        <!--         Content="Model 4" /> -->
-                        <!-- </ListBox>                 -->
                         <Button
                               Style="{StaticResource MaterialDesignFloatingActionLightButton}"
                               Margin="8 0 0 0"
@@ -80,6 +65,7 @@
                               materialDesign:ButtonProgressAssist.Minimum="0"
                               materialDesign:ButtonProgressAssist.Maximum="1"
                               materialDesign:ButtonProgressAssist.Value="{Binding ClassificationProgressPercentage}"
+                              ToolTip="Start AI Classification"
                               IsEnabled="{Binding StartClassificationEnabled}">
                               <materialDesign:PackIcon
                                   Height="24"
@@ -132,6 +118,28 @@
                     <TextBlock
                         Style="{StaticResource MaterialDesignHeadline4TextBlock}" Foreground="{Binding ClassificationResultColor}" HorizontalAlignment="Center"
                         Text="{Binding ClassificationResultText}" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <materialDesign:Card Margin="20">
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="20">
+                                <TextBlock
+                                    Style="{StaticResource MaterialDesignOverlineTextBlock}" HorizontalAlignment="Center"
+                                    Text="VOTE FRONTAL" />
+                                <TextBlock
+                                    Style="{StaticResource MaterialDesignCaptionTextBlock}" HorizontalAlignment="Center"
+                                    Text="{Binding ClassificationResultFrontal}" />
+                            </StackPanel>
+                        </materialDesign:Card>
+                        <materialDesign:Card Margin="20">
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="20">
+                                <TextBlock
+                                    Style="{StaticResource MaterialDesignOverlineTextBlock}" HorizontalAlignment="Center"
+                                    Text="VOTE LATERAL" />
+                                <TextBlock
+                                    Style="{StaticResource MaterialDesignCaptionTextBlock}" HorizontalAlignment="Center"
+                                    Text="{Binding ClassificationResultLateral}" />
+                            </StackPanel>
+                        </materialDesign:Card>
+                    </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Row="2" Grid.Column="1" Margin="10">
                     <TextBlock

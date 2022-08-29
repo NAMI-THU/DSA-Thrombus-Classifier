@@ -21,7 +21,6 @@ namespace ThromboMapUI.View;
 public class MainWindowViewModel : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
-    public const int DisplayPathLength = 30;
 
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -47,7 +46,11 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private double _classificationProgressPercentage;
 
     // Is that so good? We might fail here in the constructor
-    private ResultInterpreter _resultInterpreter = new();
+    private readonly ResultInterpreter _resultInterpreter = new();
+    private bool _conversionFrontalDone;
+    private bool _conversionLateralDone;
+    private string _classificationResultFrontal;
+    private string _classificationResultLateral;
 
 
     public ICommand BrowseModelFolderCommand{
@@ -61,14 +64,22 @@ public class MainWindowViewModel : INotifyPropertyChanged
     {
         get
         {
-            return _frontalPreparedNotification ??= new RelayCommand<string>(s => FileNameFrontal = s);
+            return _frontalPreparedNotification ??= new RelayCommand<string>(s =>
+            {
+                FileNameFrontal = s;
+                ConversionFrontalDone = true;
+            });
         }
     }
     public ICommand LateralPreparedNotification
     {
         get
         {
-            return _lateralPreparedNotification ??= new RelayCommand<string>(s => FileNameLateral = s);
+            return _lateralPreparedNotification ??= new RelayCommand<string>(s =>
+            {
+                FileNameLateral = s;
+                ConversionLateralDone = true;
+            });
         }
     }
     
@@ -87,7 +98,30 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    
+    public bool ConversionFrontalDone
+    {
+        get => _conversionFrontalDone;
+        set
+        {
+            if (value == _conversionFrontalDone) return;
+            _conversionFrontalDone = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(StartClassificationEnabled));
+        }
+    }
+
+    public bool ConversionLateralDone
+    {
+        get => _conversionLateralDone;
+        set
+        {
+            if (value == _conversionLateralDone) return;
+            _conversionLateralDone = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(StartClassificationEnabled));
+        }
+    }
+
     private string? FileNameFrontal
     {
         get => _fileNameFrontal;
@@ -96,7 +130,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
             if (_fileNameFrontal == value) return;
             _fileNameFrontal = value;
             OnPropertyChanged();
-            OnPropertyChanged(nameof(StartClassificationEnabled));
         }
     }
     
@@ -108,7 +141,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
             if (_fileNameLateral == value) return;
             _fileNameLateral = value;
             OnPropertyChanged();
-            OnPropertyChanged(nameof(StartClassificationEnabled));
         }
     }
 
@@ -124,7 +156,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    public bool StartClassificationEnabled => FileNameFrontal != "" && FileNameLateral != "" && ModelsPrepared && !ClassificationInProgress;
+    public bool StartClassificationEnabled => ConversionFrontalDone && ConversionLateralDone && ModelsPrepared && !ClassificationInProgress;
 
     private bool ModelsPrepared
     {
@@ -169,18 +201,21 @@ public class MainWindowViewModel : INotifyPropertyChanged
             _aiClassificationOutcomeCombined = value;
             
             OnPropertyChanged();
-            
-            // TODO: Not quite right yet
-            if (_resultInterpreter.HasThrombus(value))
-            {
-                ClassificationResultText = "Thrombus detected!";
-                ClassificationResultColor = Brushes.DarkRed;
-            }
-            else
-            {
-                ClassificationResultText = "No Thrombus detected.";
-                ClassificationResultColor = Brushes.DarkGreen;
-            }
+            UpdateClassificationText();
+        }
+    }
+
+    private void UpdateClassificationText()
+    {
+        if (_resultInterpreter.HasThrombus(AiClassificationOutcomeCombined))
+        {
+            ClassificationResultText = "Thrombus detected!";
+            ClassificationResultColor = Brushes.DarkRed;
+        }
+        else
+        {
+            ClassificationResultText = "No Thrombus detected.";
+            ClassificationResultColor = Brushes.DarkGreen;
         }
     }
 
@@ -194,7 +229,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
             _aiClassificationThreshold = value;
             _resultInterpreter.Threshold = value;
             OnPropertyChanged();
-            OnPropertyChanged(nameof(AiClassificationOutcomeCombined));
             OnPropertyChanged(nameof(Threshold_TP));
             OnPropertyChanged(nameof(Threshold_FP));
             OnPropertyChanged(nameof(Threshold_FN));
@@ -204,6 +238,8 @@ public class MainWindowViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(F1Score));
             OnPropertyChanged(nameof(Precision));
             OnPropertyChanged(nameof(Recall));
+            
+            UpdateClassificationText();
         }
     }
 
@@ -261,6 +297,28 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
+    public string ClassificationResultFrontal
+    {
+        get => _classificationResultFrontal;
+        set
+        {
+            if (value.Equals(_classificationResultFrontal)) return;
+            _classificationResultFrontal = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string ClassificationResultLateral
+    {
+        get => _classificationResultLateral;
+        set
+        {
+            if (value.Equals(_classificationResultLateral)) return;
+            _classificationResultLateral = value;
+            OnPropertyChanged();
+        }
+    }
+
     private void OnBrowseModelFolderClicked()
     {
         var dialog = new CommonOpenFileDialog
@@ -312,16 +370,21 @@ public class MainWindowViewModel : INotifyPropertyChanged
         
         ClassificationInProgress = false;
         AiClassificationDone = true;
-        //ClassificationResultsText = $"Frontal: {string.Join(", ", response.OutputFrontal)} | Lateral: {string.Join(", ", response.OutputLateral)}";
-        AiClassificationOutcomeCombined = CalculateCombinedResult(responses);
+        var averages = CalculateCombinedResult(responses);
+        AiClassificationOutcomeCombined = averages.Item1;
+        ClassificationResultFrontal = $"{averages.Item2:F2}";
+        ClassificationResultLateral = $"{averages.Item3:F2}";
     }
 
-    private double CalculateCombinedResult(List<ClassificationResponse> responses)
+    /**
+     * Returns the global average of all models combined and the average of the frontal and lateral models.
+     */
+    private Tuple<double,double,double> CalculateCombinedResult(IReadOnlyCollection<ClassificationResponse> responses)
     {
-        // TODO: Average isn't working yet + is wrong
-        var avgF = responses.Sum(r => r.OutputFrontal.Sum()) / (responses.Count/2);
-        var avgL = responses.Sum(r => r.OutputLateral.Sum()) / (responses.Count / 2);
-        return (avgF + avgL) / 2;
+        var avgF = responses.Average(r => (r.OutputFrontal ?? throw new InvalidOperationException()).Average());
+        var avgL = responses.Average(r => (r.OutputLateral ?? throw new InvalidOperationException()).Average());
+        var globalVote = (avgF + avgL) / 2;
+        return new Tuple<double, double, double>(globalVote, avgF, avgL);
     }
 
     private async void PreloadModels()
