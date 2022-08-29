@@ -1,11 +1,11 @@
-﻿using System.Configuration;
+﻿using System.Diagnostics;
 using CliWrap;
 
 namespace Services.FileUtils;
 
-public class DicomConverter
+public static class DicomConverter
 {
-    private static readonly string ConverterPath = Configuration.PlastimatchPath;
+    private static string _converterPath = Configuration.PlastimatchPath;
     
     public static async Task<string> Dicom2Nifti(string? inputPath)
     {
@@ -16,13 +16,22 @@ public class DicomConverter
         }
         
         // Check converter, TODO: Add security checks. Embed, check hash?
-        if (!File.Exists(ConverterPath))
+        if (!File.Exists(_converterPath))
         {
-            throw new ArgumentException("Unable to find converter.");
+            var workingDirectory = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+            var file = Path.Combine(workingDirectory, "plastimatch", "plastimatch.exe");
+            if (File.Exists(file))
+            {
+                _converterPath = file;
+            }
+            else
+            {
+                throw new ArgumentException("Unable to find plastimatch. Please make sure it is in the exe's directory or specify the path in Services.dll.config");
+            }
         }
         
         var tmpFile = Path.GetTempFileName()+".nii";
-        await Cli.Wrap(ConverterPath)
+        await Cli.Wrap(_converterPath)
             .WithArguments($"convert --input {inputPath} --output-img {tmpFile}")
             .ExecuteAsync();
         return tmpFile;
