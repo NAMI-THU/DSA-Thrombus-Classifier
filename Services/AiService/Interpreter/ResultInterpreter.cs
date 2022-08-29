@@ -1,4 +1,5 @@
 ﻿
+using System.Diagnostics;
 using System.Text.Json;
 
 namespace Services.AiService.Interpreter;
@@ -41,24 +42,37 @@ public class ResultInterpreter
     public string RecallString { get; private set; } = "0%";
 
 
-    public void LoadData()
+    public async Task LoadData()
     {
-        // TODO: Make Async
-        var outputs_validation = new List<FoldSingleResult>();
-        var outputs_test = new List<FoldSingleResult>();
+        var testResultsPath = "Configuration.ModelOutputs";
+        if (!Directory.Exists(testResultsPath))
+        {
+            var path = Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName),"TestResults");
+            if (Directory.Exists(path))
+            {
+                testResultsPath = path;
+            }
+            else
+            {
+                throw new FileNotFoundException(
+                    "ModelOutputs path does not exist. Please correct the respective setting in appsettings.json. Alternatively, copy the TestResults-folder in the working directory of this program.");
+            }
+        }
+        var outputsValidation = new List<FoldSingleResult>();
+        var outputsTest = new List<FoldSingleResult>();
         for (var fold = 1; fold <= 5; fold++)
         {
-            using FileStream stream = File.OpenRead(Path.Combine(Configuration.ModelOutputs,$"output_fold_{fold}.json"));
-            using FileStream stream2 = File.OpenRead(Path.Combine(Configuration.ModelOutputs,$"output_fold_{fold}_test.json"));
-            var foldResults = JsonSerializer.Deserialize<List<FoldSingleResult>>(stream);
-            var foldResults2 = JsonSerializer.Deserialize<List<FoldSingleResult>>(stream2);
-            outputs_validation.AddRange(foldResults ?? throw new InvalidOperationException("invalid data in output file"));
-            outputs_test.AddRange(foldResults2 ?? throw new InvalidOperationException("invalid data in output file"));
+            await using var stream = File.OpenRead(Path.Combine(testResultsPath,$"output_fold_{fold}.json"));
+            await using var stream2 = File.OpenRead(Path.Combine(testResultsPath,$"output_fold_{fold}_test.json"));
+            var foldResults = await JsonSerializer.DeserializeAsync<List<FoldSingleResult>>(stream);
+            var foldResults2 = await JsonSerializer.DeserializeAsync<List<FoldSingleResult>>(stream2);
+            outputsValidation.AddRange(foldResults ?? throw new InvalidOperationException("invalid data in output file"));
+            outputsTest.AddRange(foldResults2 ?? throw new InvalidOperationException("invalid data in output file"));
         }
 
         _testResultsValidationSet.Clear();
         
-        foreach (var fsr in outputs_validation)
+        foreach (var fsr in outputsValidation)
         {
             var frontal = new Tuple<double, bool>(fsr.Frontal_Output, fsr.Frontal_Expected.Equals(1.0));
             var lateral = new Tuple<double, bool>(fsr.Lateral_Output, fsr.Lateral_Expected.Equals(1.0));
@@ -67,7 +81,7 @@ public class ResultInterpreter
         }
         
         _testResultsTestSet.Clear();
-        foreach (var fsr in outputs_test)
+        foreach (var fsr in outputsTest)
         {
             var frontal = new Tuple<double, bool>(fsr.Frontal_Output, fsr.Frontal_Expected.Equals(1.0));
             var lateral = new Tuple<double, bool>(fsr.Lateral_Output, fsr.Lateral_Expected.Equals(1.0));

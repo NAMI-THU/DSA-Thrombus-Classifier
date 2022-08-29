@@ -93,8 +93,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     {
         get
         {
-            return _windowLoadedCommand ??= new RelayCommand<object>(_ => {});
-            // return _windowLoadedCommand ??= new RelayCommand<object>(p=>PreloadModels(), a=>true); 
+            return _windowLoadedCommand ??= new RelayCommand<object>(_ => LoadInterpreter());
         }
     }
 
@@ -398,15 +397,9 @@ public class MainWindowViewModel : INotifyPropertyChanged
         ClassificationInProgress = false;
     }
 
-    private void LoadInterpreter()
+    private async void LoadInterpreter()
     {
-        _resultInterpreter.LoadData();
+        await _resultInterpreter.LoadData().ConfigureAwait(false);
         AiClassificationThreshold = _resultInterpreter.CalculateBestThreshold();
-    }
-
-    public MainWindowViewModel()
-    {
-        // TODO
-        LoadInterpreter();
     }
 }

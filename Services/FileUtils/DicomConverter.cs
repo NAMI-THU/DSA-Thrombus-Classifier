@@ -26,7 +26,7 @@ public static class DicomConverter
             }
             else
             {
-                throw new ArgumentException("Unable to find plastimatch. Please make sure it is in the exe's directory or specify the path in Services.dll.config");
+                throw new ArgumentException("Unable to find plastimatch. Please make sure it is in the exe's directory or specify the path in appsettings.json");
             }
         }
         
