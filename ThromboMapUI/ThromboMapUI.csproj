@@ -5,6 +5,11 @@
         <TargetFramework>net6.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
+        <LangVersion>10</LangVersion>
+        <Authors>Technische Hochschule Ulm</Authors>
+        <Description>A demonstrator for thrombusdetection on DSA sequences.</Description>
+        <Company>Technische Hochschule Ulm</Company>
+        <Product>ThromboMap</Product>
     </PropertyGroup>
 
     <ItemGroup>
@@ -27,6 +32,9 @@
     <ItemGroup>
         <None Update="SimpleITKCSharpNative.dll">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="App.config">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
 </Project>

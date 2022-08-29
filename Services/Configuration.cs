@@ -1,8 +1,10 @@
-﻿namespace Services;
+﻿using System.Configuration;
 
-public class Configuration
+namespace Services;
+
+public static class Configuration
 {
-    public static string AiServiceUrl => "127.0.0.1:5000";
-    public static string PlastimatchPath => "YOUR_PATH_TO_PLASTIMATCH_HERE";
-    public static string ModelOutputs => "YOUR_PATH_TO_TESTING_RESULTS_HERE";
+    public static string AiServiceUrl => ConfigurationManager.ConnectionStrings["AiServiceUrl"].ConnectionString;
+    public static string PlastimatchPath => ConfigurationManager.AppSettings.Get("PlastimatchPath");
+    public static string ModelOutputs => ConfigurationManager.AppSettings.Get("ModelsEvaluationDirectory");
 }
