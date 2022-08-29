@@ -5,6 +5,7 @@ Created on Thu Nov 21 10:43:23 2019
 @author: mittmann
 """
 
+
 class IndexTracker(object):
     def __init__(self, axes, image_data, image_name, positions):
         self.axes = axes
@@ -17,7 +18,6 @@ class IndexTracker(object):
         x_shape, y_shape, self.length = image_data.shape
         self.inverted = False
         self.update()
-
 
     def onscroll(self, event):
         if event.button == 'up':
@@ -32,7 +32,7 @@ class IndexTracker(object):
             self.axes.invert_yaxis()
 
         self.image.set_data(self.image_data[:, :, self.index])
-        #self.image.set_data(y,x)
+        # self.image.set_data(y,x)
         self.axes.set_ylabel('index = %s' % self.index)
         self.image.axes.figure.canvas.draw()
         for point in self.positions:

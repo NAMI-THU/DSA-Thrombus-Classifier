@@ -1,24 +1,22 @@
 # -*- coding: utf-8 -*-
+import math
 import os
 import time
 
-from DsaDataset import DsaDataset
-from torch.utils.data import DataLoader
-from ModelEvaluation import ModelEvaluation
-from LSTMModel import LSTMModel
-from CnnLstmModel import CnnLstmModel
-import torchvision.models as models
-import torch.cuda
-import torch.optim
-import torch.nn
-from torch import autograd
-import numpy as np
 import nibabel
-from ImageUtils import ImageUtils
+import numpy as np
+import torch.cuda
+import torch.nn
+import torch.optim
+
+from CnnLstmModel import CnnLstmModel
 from DataAugmentation import DataAugmentation
+from ImageUtils import ImageUtils
 
 THROMBUS_NO = 0.214
 THROMBUS_YES = 0.786
+
+MINIMUM_FREE_GPU_VRAM_GB = 4
 
 
 class Classificator:
@@ -33,12 +31,23 @@ class Classificator:
         MODEL_F = os.path.join(folder, "frontal")
         MODEL_L = os.path.join(folder, "lateral")
 
-        #MODEL_F = "models\\frontal"
+        # MODEL_F = "models\\frontal"
         # MODEL_F = "models\\model_frontal.pt"
         # MODEL_L = "models\\model_lateral.pt"
-        #MODEL_L = "models\\lateral"
+        # MODEL_L = "models\\lateral"
 
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        for d in range(torch.cuda.device_count()):
+            device = torch.device(f"cuda:{d}")
+            (free, total) = torch.cuda.mem_get_info(device)
+            gb = free * 9.31 * math.pow(10, -10)
+            print(f"Device {device} has {gb} free RAM.")
+            if gb < MINIMUM_FREE_GPU_VRAM_GB:
+                print(f"This is not enough, we need at least {MINIMUM_FREE_GPU_VRAM_GB} GB.")
+                device = torch.device("cpu")
+            else:
+                device = torch.device(f"cuda:{d}")
+
         print(f"Running on {device}")
 
         # Load Checkpoints:
@@ -152,7 +161,7 @@ class Classificator:
                 outputs_frontal.append(activation_f)
                 estimates_frontal.append(estimate_frontal)
                 current_progress += 1
-                print(f"Progress: {current_progress}/{global_goal} ({current_progress*100/global_goal}%)")
+                print(f"Progress: {current_progress}/{global_goal} ({current_progress * 100 / global_goal}%)")
         else:
             output_frontal = self.models_frontal[mf](images_frontal)
             activation_f = torch.sigmoid(output_frontal).item()
@@ -178,7 +187,6 @@ class Classificator:
         t3 = time.time()
         del images_frontal
         del images_lateral
-
 
         # print(f"Estimate Frontal (has Thrombus?): {estimate_frontal == THROMBUS_YES} / Raw was {activation_f}")
         # print(f"Estimate Lateral (has Thrombus?): {estimate_lateral == THROMBUS_YES} / Raw was {activation_l}")
