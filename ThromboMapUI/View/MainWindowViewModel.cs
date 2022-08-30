@@ -1,62 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using MaterialDesignThemes.Wpf;
-using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Services.AiService;
 using Services.AiService.Interpreter;
 using Services.AiService.Responses;
+using ThromboMapUI.Util;
 
 namespace ThromboMapUI.View;
 
 public class MainWindowViewModel : INotifyPropertyChanged
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    private RelayCommand<object>? _startClassificationCommand;
-    private RelayCommand<object>? _windowLoadedCommand;
-    private RelayCommand<string>? _frontalPreparedNotification;
-    private RelayCommand<string>? _lateralPreparedNotification;
-    private RelayCommand<object>? _browseModelFolderCommand;
-    private string? _fileNameFrontal;
-    private string? _fileNameLateral;
-    private bool _classificationInProgress;
-    private string _classificationResultsText = "Not run yet.";
-    private bool _modelsPrepared;
+    private readonly ResultInterpreter _resultInterpreter = new();
+    
     private bool _aiClassificationDone;
     private double _aiClassificationOutcomeCombined;
     private double _aiClassificationThreshold = 0.5;
-    private string _classificationResultText;
-    private SolidColorBrush _classificationResultColor;
-    private string _modelSelectionFolder;
-    private PackIcon _modelSelectionFolderBadge = new(){Kind = PackIconKind.Alert};
+    private RelayCommand<object>? _browseModelFolderCommand;
+    private bool _classificationInProgress;
     private double _classificationProgressPercentage;
-
-    // Is that so good? We might fail here in the constructor
-    private readonly ResultInterpreter _resultInterpreter = new();
+    private SolidColorBrush _classificationResultColor = Brushes.White;
+    private string _classificationResultFrontal = "/";
+    private string _classificationResultLateral = "/";
+    private string _classificationResultText = "Not run yet";
     private bool _conversionFrontalDone;
     private bool _conversionLateralDone;
-    private string _classificationResultFrontal;
-    private string _classificationResultLateral;
+    private string? _fileNameFrontal;
+    private string? _fileNameLateral;
+    private RelayCommand<string>? _frontalPreparedNotification;
+    private RelayCommand<string>? _lateralPreparedNotification;
+    private string? _modelSelectionFolder;
+    private PackIcon _modelSelectionFolderBadge = new(){Kind = PackIconKind.Alert};
+    private bool _modelsPrepared;
+
+    private RelayCommand<object>? _startClassificationCommand;
+    private RelayCommand<object>? _windowLoadedCommand;
 
 
     public ICommand BrowseModelFolderCommand{
         get
         {
-            return _browseModelFolderCommand ??= new RelayCommand<object>(s => OnBrowseModelFolderClicked());
+            return _browseModelFolderCommand ??= new RelayCommand<object>(_ => OnBrowseModelFolderClicked());
         }
     }
 
@@ -71,6 +62,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
             });
         }
     }
+
     public ICommand LateralPreparedNotification
     {
         get
@@ -82,10 +74,10 @@ public class MainWindowViewModel : INotifyPropertyChanged
             });
         }
     }
-    
+
     public ICommand StartClassificationCommand { 
         get {
-            return _startClassificationCommand ??= new RelayCommand<object>(p => StartClassificationOnClick(), a => true);
+            return _startClassificationCommand ??= new RelayCommand<object>(_ => StartClassificationOnClick());
         } 
     }
 
@@ -97,7 +89,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    public bool ConversionFrontalDone
+    private bool ConversionFrontalDone
     {
         get => _conversionFrontalDone;
         set
@@ -109,7 +101,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    public bool ConversionLateralDone
+    private bool ConversionLateralDone
     {
         get => _conversionLateralDone;
         set
@@ -131,7 +123,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
-    
+
     private string? FileNameLateral
     {
         get => _fileNameLateral;
@@ -168,18 +160,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(StartClassificationEnabled));
         }
     }
-
-    public string ClassificationResultsText
-    {
-        get => _classificationResultsText;
-        private set
-        {
-            if (_classificationResultsText == value) return;
-            _classificationResultsText = value;
-            OnPropertyChanged();
-        }
-    }
-
     public bool AiClassificationDone
     {
         get => _aiClassificationDone;
@@ -201,20 +181,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
             
             OnPropertyChanged();
             UpdateClassificationText();
-        }
-    }
-
-    private void UpdateClassificationText()
-    {
-        if (_resultInterpreter.HasThrombus(AiClassificationOutcomeCombined))
-        {
-            ClassificationResultText = "Thrombus detected!";
-            ClassificationResultColor = Brushes.DarkRed;
-        }
-        else
-        {
-            ClassificationResultText = "No Thrombus detected.";
-            ClassificationResultColor = Brushes.DarkGreen;
         }
     }
 
@@ -266,7 +232,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public string ClassificationResultText
     {
         get => _classificationResultText;
-        set
+        private set
         {
             if (value == _classificationResultText) return;
             _classificationResultText = value;
@@ -277,7 +243,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public SolidColorBrush ClassificationResultColor
     {
         get => _classificationResultColor;
-        set
+        private set
         {
             if (Equals(value, _classificationResultColor)) return;
             _classificationResultColor = value;
@@ -299,7 +265,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public string ClassificationResultFrontal
     {
         get => _classificationResultFrontal;
-        set
+        private set
         {
             if (value.Equals(_classificationResultFrontal)) return;
             _classificationResultFrontal = value;
@@ -310,11 +276,42 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public string ClassificationResultLateral
     {
         get => _classificationResultLateral;
-        set
+        private set
         {
             if (value.Equals(_classificationResultLateral)) return;
             _classificationResultLateral = value;
             OnPropertyChanged();
+        }
+    }
+
+    private string? ModelSelectionFolder
+    {
+        get => _modelSelectionFolder;
+        set
+        {
+            if (value == _modelSelectionFolder) return;
+            _modelSelectionFolder = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    private void UpdateClassificationText()
+    {
+        if (_resultInterpreter.HasThrombus(AiClassificationOutcomeCombined))
+        {
+            ClassificationResultText = "Thrombus detected!";
+            ClassificationResultColor = Brushes.DarkRed;
+        }
+        else
+        {
+            ClassificationResultText = "No Thrombus detected.";
+            ClassificationResultColor = Brushes.DarkGreen;
         }
     }
 
@@ -326,35 +323,27 @@ public class MainWindowViewModel : INotifyPropertyChanged
         };
         if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
         {
-            ModelSelectionFolder = dialog.FileName;
-            // TODO: Proper validation of folder contents
-            ModelSelectionFolderBadge = new() { Kind = PackIconKind.Check };
-            PreloadModels();
-        }
-    }
-
-    public string ModelSelectionFolder
-    {
-        get => _modelSelectionFolder;
-        set
-        {
-            if (value == _modelSelectionFolder) return;
-            _modelSelectionFolder = value;
-            OnPropertyChanged();
+            var structureOkay = Validation.CheckModelFolderStructure(dialog.FileName);
+            if (structureOkay)
+            {
+                ModelSelectionFolder = dialog.FileName;
+                ModelSelectionFolderBadge = new PackIcon { Kind = PackIconKind.Sync };
+                PreloadModels();
+            }
+            else
+            {
+                MessageBox.Show("The structure of the selected directory is invalid. Ensure that the selected folder has a frontal and lateral subdirectory, in which the respective model (or multiple model-folds) is. Additionally, make sure that the filenames of both versions are identical (that means, corresponding model names should have the same name, e.g. frontal/fold1.pt and lateral/fold1.pt or frontal/model.pt and lateral/model.pt", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
     private async void StartClassificationOnClick()
     {
-        // TODO Check if paths are valid and everything is converted and set, and only then enable the button
-        // TODO: Make sure, that the folder structure is like this: /frontal/model1.pt .. /lateral/model1.pt
-        // The models must have the same name!
         ClassificationInProgress = true;
 
-        //var modelFolders = Directory.GetDirectories(ModelSelectionFolder);
         var responses = new List<ClassificationResponse>();
-        var frontals = Path.Join(ModelSelectionFolder, "frontal");
-        var models = Directory.GetFiles(frontals);
+        var folderFrontal = Path.Join(ModelSelectionFolder, "frontal");
+        var models = Directory.GetFiles(folderFrontal);
         foreach(var model in models)
         {
             var modelName = Path.GetFileName(model);
@@ -369,32 +358,38 @@ public class MainWindowViewModel : INotifyPropertyChanged
         
         ClassificationInProgress = false;
         AiClassificationDone = true;
-        var averages = CalculateCombinedResult(responses);
+        var averages = ResultInterpreter.CalculateCombinedResult(responses);
         AiClassificationOutcomeCombined = averages.Item1;
         ClassificationResultFrontal = $"{averages.Item2:F2}";
         ClassificationResultLateral = $"{averages.Item3:F2}";
     }
 
-    /**
-     * Returns the global average of all models combined and the average of the frontal and lateral models.
-     */
-    private Tuple<double,double,double> CalculateCombinedResult(IReadOnlyCollection<ClassificationResponse> responses)
-    {
-        var avgF = responses.Average(r => (r.OutputFrontal ?? throw new InvalidOperationException()).Average());
-        var avgL = responses.Average(r => (r.OutputLateral ?? throw new InvalidOperationException()).Average());
-        var globalVote = (avgF + avgL) / 2;
-        return new Tuple<double, double, double>(globalVote, avgF, avgL);
-    }
-
     private async void PreloadModels()
     {
+        if (ModelSelectionFolder == null) return;
+        
         ModelsPrepared = false;
         ClassificationInProgress = true;
-        ClassificationResultsText = "Initializing models...";
-        await AiServiceCommunication.PreloadModels(ModelSelectionFolder);
-        ClassificationResultsText = "";
-        ModelsPrepared = true;
-        ClassificationInProgress = false;
+        ClassificationResultText = "Initializing models...";
+        try
+        {
+            await AiServiceCommunication.PreloadModels(ModelSelectionFolder);
+            ModelSelectionFolderBadge = new PackIcon { Kind = PackIconKind.Check };
+            ClassificationResultText = "Not run yet";
+            ModelsPrepared = true;
+        }
+        catch (HttpRequestException)
+        {
+            MessageBox.Show("Server is unavailable. Please make sure it is running and select the folder again.", "Connection refused",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            ModelsPrepared = false;
+            ModelSelectionFolderBadge = new PackIcon { Kind = PackIconKind.Alert };
+        }
+        finally
+        {
+            ClassificationResultText = "Not run yet";
+            ClassificationInProgress = false;
+        }
     }
 
     private async void LoadInterpreter()

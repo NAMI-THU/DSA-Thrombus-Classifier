@@ -15,7 +15,7 @@ public static class DicomConverter
             throw new ArgumentException("The specified file path was not valid.", nameof(inputPath));
         }
         
-        // Check converter, TODO: Add security checks. Embed, check hash?
+        // Check converter
         if (!File.Exists(_converterPath))
         {
             var workingDirectory = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
@@ -31,9 +31,17 @@ public static class DicomConverter
         }
         
         var tmpFile = Path.GetTempFileName()+".nii";
-        await Cli.Wrap(_converterPath)
-            .WithArguments($"convert --input {inputPath} --output-img {tmpFile}")
-            .ExecuteAsync();
+        
+        var result = await Cli.Wrap(_converterPath)
+                .WithArguments($"convert --input {inputPath} --output-img {tmpFile}")
+                .WithValidation(CommandResultValidation.None)
+                .ExecuteAsync();
+
+        if (result.ExitCode != 0)
+        {
+            throw new ArgumentException("Conversion of input file failed.");
+        }
+
         return tmpFile;
     }
 }

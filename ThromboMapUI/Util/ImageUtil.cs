@@ -14,7 +14,10 @@ using PixelId = itk.simple.PixelIDValueEnum;
 
 namespace ThromboMapUI.Util;
 
-public class ImageUtil
+/**
+ * Some really black magic is happening here. We need this sorcery to correctly cast between multiple memory buffers and finally return a bitmap
+ */
+public static class ImageUtil
 {
     [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -24,7 +27,7 @@ public class ImageUtil
     {
         var result = await Task.Run(() =>
         {
-            SitkImage input = SimpleITK.ReadImage(path);
+            var input = SimpleITK.ReadImage(path);
             input = SimpleITK.Cast(input, PixelId.sitkUInt8);
 
             var buffer = input.GetBufferAsUInt8();

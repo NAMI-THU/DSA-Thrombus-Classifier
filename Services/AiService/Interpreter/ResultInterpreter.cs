@@ -1,6 +1,7 @@
 ﻿
 using System.Diagnostics;
 using System.Text.Json;
+using Services.AiService.Responses;
 
 namespace Services.AiService.Interpreter;
 
@@ -8,8 +9,8 @@ public class ResultInterpreter
 {
     // TODO: Perhaps distinguish between frontal and lateral for threshold ?
     private double _threshold;
-    private List<Tuple<double, bool>> _testResultsValidationSet = new();
-    private List<Tuple<double, bool>> _testResultsTestSet = new();
+    private readonly List<Tuple<double, bool>> _testResultsValidationSet = new();
+    private readonly List<Tuple<double, bool>> _testResultsTestSet = new();
     public double Threshold
     {
         get => _threshold;
@@ -44,7 +45,7 @@ public class ResultInterpreter
 
     public async Task LoadData()
     {
-        var testResultsPath = "Configuration.ModelOutputs";
+        var testResultsPath = Configuration.ModelOutputs;
         if (!Directory.Exists(testResultsPath))
         {
             var path = Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName),"TestResults");
@@ -183,7 +184,6 @@ public class ResultInterpreter
     public double CalculateBestThreshold()
     {
         // We search threshold t=argmax sqrt((1-FPR)²+TPR²)
-        // TODO: Look for better metric
         var best_t = 0.0;
         var distance = 0.0;
         for(var t = 0.0; t<=1.0;t+=0.005){
@@ -197,5 +197,16 @@ public class ResultInterpreter
         }
 
         return best_t;
+    }
+    
+    /**
+     * Returns the global average of all models combined and the average of the frontal and lateral models.
+     */
+    public static Tuple<double,double,double> CalculateCombinedResult(IReadOnlyCollection<ClassificationResponse> responses)
+    {
+        var avgF = responses.Average(r => (r.OutputFrontal ?? throw new InvalidOperationException()).Average());
+        var avgL = responses.Average(r => (r.OutputLateral ?? throw new InvalidOperationException()).Average());
+        var globalVote = (avgF + avgL) / 2;
+        return new Tuple<double, double, double>(globalVote, avgF, avgL);
     }
 }

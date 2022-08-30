@@ -1,5 +1,7 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -14,30 +16,25 @@ namespace ThromboMapUI.View;
 
 public partial class NiftiView : UserControl, INotifyPropertyChanged
 {
-    private ImageSource? _imageDisplay;
-    private string _fileName = "";
-    private bool _convertInProgress;
-    private bool _convertEnabled;
-    public event PropertyChangedEventHandler? PropertyChanged;
-    private RelayCommand<object>? _convertCommand;
     private RelayCommand<object>? _browseCommand;
+    private RelayCommand<object>? _convertCommand;
+    private bool _convertEnabled;
+    private bool _convertInProgress;
+    private string _fileName = "";
     private bool _filePrepared;
-    private PackIconKind _headerIcon = PackIconKind.Error;
     private Brush _headerColor = Brushes.DarkRed;
-    private string _imageName;
+    private PackIconKind _headerIcon = PackIconKind.Error;
+    private ImageSource? _imageDisplay;
+    private string _imageName = "";
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-    
     public NiftiView()
     {
         InitializeComponent();
     }
 
-    public ICommand FilePreparedNotificationCommand { get; set; }
+    public ICommand? FilePreparedNotificationCommand { get; set; }
 
-    public ImageSource ImageDisplay
+    public ImageSource? ImageDisplay
     {
         get => _imageDisplay;
         private set
@@ -103,7 +100,7 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
             {
                 HeaderColor = new SolidColorBrush(new PaletteHelper().GetTheme().PrimaryDark.Color);
                 HeaderIcon = PackIconKind.Check;
-                FilePreparedNotificationCommand.Execute(FileName);
+                FilePreparedNotificationCommand?.Execute(FileName);
             }
             OnPropertyChanged();
         }
@@ -144,12 +141,18 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
 
     public ICommand ConvertCommand
     {
-        get { return _convertCommand ??= new RelayCommand<object>(p => ConvertOnClick(), a => ConvertEnabled); }
+        get { return _convertCommand ??= new RelayCommand<object>(_ => ConvertOnClick(), _ => ConvertEnabled); }
     }
 
     public ICommand BrowseCommand
     {
-        get { return _browseCommand ??= new RelayCommand<object>(p=>BrowseOnClick(), a=>true); }
+        get { return _browseCommand ??= new RelayCommand<object>(_=>BrowseOnClick()); }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     private void BrowseOnClick()
@@ -165,9 +168,21 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
     {
         ConvertEnabled = false;
         ConvertInProgress = true;
-        var newPath = await DicomConverter.Dicom2Nifti(FileName);
-        ConvertInProgress = false;
-        FileName = newPath;
+        try
+        {
+            var newPath = await DicomConverter.Dicom2Nifti(FileName);
+            FileName = newPath;
+        }
+        catch (ArgumentException)
+        {
+            // Conversion was not possible
+            MessageBox.Show("Conversion of the input file failed. Please make sure it is in the correct format.",
+                "Conversion failed", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+        finally
+        {
+            ConvertInProgress = false;
+        }
     }
 
     private async void LoadImage()

@@ -9,98 +9,101 @@
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="ExtraLight"
         TextElement.FontSize="12"
-        TextOptions.TextFormattingMode="Ideal" 
-        TextOptions.TextRenderingMode="Auto"        
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
+        WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
         Title="Thrombomap" Height="1024" Width="1100">
     <Window.DataContext>
-        <view:MainWindowViewModel/>
+        <view:MainWindowViewModel />
     </Window.DataContext>
     <b:Interaction.Triggers>
         <b:EventTrigger EventName="Loaded">
             <b:InvokeCommandAction Command="{Binding WindowLoadedCommand}" />
         </b:EventTrigger>
     </b:Interaction.Triggers>
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <StackPanel Orientation="Vertical">
             <TextBlock
                 Style="{StaticResource MaterialDesignHeadline2TextBlock}"
-                Text="Thrombomap" Margin="20" HorizontalAlignment="Center"/>
+                Text="Thrombomap" Margin="20" HorizontalAlignment="Center" />
             <Grid Margin="20">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                
-                <Grid.ColumnDefinitions >
-                    <ColumnDefinition Width="*" MinWidth="300px"/>
-                    <ColumnDefinition Width="*" MinWidth="300px"/>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="300px" />
+                    <ColumnDefinition Width="*" MinWidth="300px" />
                 </Grid.ColumnDefinitions>
-                
-                <view:NiftiView Grid.Row="0" Grid.Column="0" Margin="10" ImageName="Frontal" x:Name="FrontalNiftiView" MaxHeight="800px" MaxWidth="800px"></view:NiftiView>
-                <view:NiftiView Grid.Row="0" Grid.Column="1" Margin="10" ImageName="Lateral" x:Name="LateralNiftiView" MaxHeight="800px" MaxWidth="800px"></view:NiftiView>
-                
+
+                <view:NiftiView Grid.Row="0" Grid.Column="0" Margin="10" ImageName="Frontal" x:Name="FrontalNiftiView"></view:NiftiView>
+                <view:NiftiView Grid.Row="0" Grid.Column="1" Margin="10" ImageName="Lateral" x:Name="LateralNiftiView"></view:NiftiView>
+
                 <Separator Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="10" />
-                
+
                 <StackPanel Grid.Row="2" Grid.Column="0" Margin="10">
                     <TextBlock
-                        Margin="0,0,0,20" HorizontalAlignment="Center"
+                        Margin="0,10,0,20" HorizontalAlignment="Center"
                         Style="{StaticResource MaterialDesignHeadline4TextBlock}"
                         Text="Classification" />
                     <materialDesign:Badged HorizontalAlignment="Center" Margin="20"
-                        Badge="{Binding ModelSelectionFolderBadge}"
-                        BadgeColorZoneMode="SecondaryMid">
+                                           Badge="{Binding ModelSelectionFolderBadge}"
+                                           BadgeColorZoneMode="SecondaryMid">
                         <Button Command="{Binding BrowseModelFolderCommand}">Select Model Folder</Button>
                     </materialDesign:Badged>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button
-                              Style="{StaticResource MaterialDesignFloatingActionLightButton}"
-                              Margin="8 0 0 0"
-                              Command="{Binding StartClassificationCommand}"
-                              materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ClassificationInProgress}"
-                              materialDesign:ButtonProgressAssist.IsIndeterminate="True"
-                              materialDesign:ButtonProgressAssist.Minimum="0"
-                              materialDesign:ButtonProgressAssist.Maximum="1"
-                              materialDesign:ButtonProgressAssist.Value="{Binding ClassificationProgressPercentage}"
-                              ToolTip="Start AI Classification"
-                              IsEnabled="{Binding StartClassificationEnabled}">
-                              <materialDesign:PackIcon
-                                  Height="24"
-                                  Width="24">
-                                  <materialDesign:PackIcon.Style>
-                                      <Style
-                                          TargetType="materialDesign:PackIcon"
-                                          BasedOn="{StaticResource {x:Type materialDesign:PackIcon}}">
-                                          <Setter
-                                              Property="Kind"
-                                              Value="CloudSync" />
-                                          <Style.Triggers>
-                                              <DataTrigger
-                                                  Binding="{Binding AiClassificationDone}"
-                                                  Value="True">
-                                                  <Setter
-                                                      Property="Kind"
-                                                      Value="CloudCheck" />
-                                                  <DataTrigger.EnterActions>
-                                                      <BeginStoryboard>
-                                                          <Storyboard>
-                                                              <DoubleAnimation
-                                                                  Storyboard.TargetProperty="Opacity"
-                                                                  From="0"
-                                                                  To="1"
-                                                                  Duration="0:0:0.8" />
-                                                          </Storyboard>
-                                                      </BeginStoryboard>
-                                                  </DataTrigger.EnterActions>
-                                              </DataTrigger>
-                                          </Style.Triggers>
-                                      </Style>
-                                  </materialDesign:PackIcon.Style>
-                              </materialDesign:PackIcon>
-                          </Button>
+                            Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
+                            Margin="8 0 0 0"
+                            Command="{Binding StartClassificationCommand}"
+                            materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ClassificationInProgress}"
+                            materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                            materialDesign:ButtonProgressAssist.Minimum="0"
+                            materialDesign:ButtonProgressAssist.Maximum="1"
+                            materialDesign:ButtonProgressAssist.Value="{Binding ClassificationProgressPercentage}"
+                            ToolTip="Start AI Classification"
+                            Height="64"
+                            Width="64"
+                            IsEnabled="{Binding StartClassificationEnabled}">
+                            <materialDesign:PackIcon
+                                Height="42"
+                                Width="42">
+                                <materialDesign:PackIcon.Style>
+                                    <Style
+                                        TargetType="materialDesign:PackIcon"
+                                        BasedOn="{StaticResource {x:Type materialDesign:PackIcon}}">
+                                        <Setter
+                                            Property="Kind"
+                                            Value="Robot" />
+                                        <Style.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding AiClassificationDone}"
+                                                Value="True">
+                                                <Setter
+                                                    Property="Kind"
+                                                    Value="CloudCheck" />
+                                                <DataTrigger.EnterActions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <DoubleAnimation
+                                                                Storyboard.TargetProperty="Opacity"
+                                                                From="0"
+                                                                To="1"
+                                                                Duration="0:0:0.8" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.EnterActions>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </materialDesign:PackIcon.Style>
+                            </materialDesign:PackIcon>
+                        </Button>
                     </StackPanel>
                     <Slider Margin="30"
                             IsEnabled="False"
@@ -110,32 +113,39 @@
                             Minimum="0"
                             Maximum="1"
                             IsSnapToTickEnabled="False"
-                            Value="{Binding AiClassificationOutcomeCombined}" 
+                            Value="{Binding AiClassificationOutcomeCombined}"
                             AutoToolTipPlacement="BottomRight"
                             SelectionStart="{Binding AiClassificationThreshold}"
                             SelectionEnd="1"
                             IsSelectionRangeEnabled="True" />
                     <TextBlock
-                        Style="{StaticResource MaterialDesignHeadline4TextBlock}" Foreground="{Binding ClassificationResultColor}" HorizontalAlignment="Center"
+                        Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+                        Foreground="{Binding ClassificationResultColor}" 
+                        HorizontalAlignment="Center"
+                        Margin="0,10,0,0"
                         Text="{Binding ClassificationResultText}" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <materialDesign:Card Margin="20">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="20">
                                 <TextBlock
-                                    Style="{StaticResource MaterialDesignOverlineTextBlock}" HorizontalAlignment="Center"
+                                    Style="{StaticResource MaterialDesignOverlineTextBlock}"
+                                    HorizontalAlignment="Center"
                                     Text="VOTE FRONTAL" />
                                 <TextBlock
-                                    Style="{StaticResource MaterialDesignCaptionTextBlock}" HorizontalAlignment="Center"
+                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                    HorizontalAlignment="Center"
                                     Text="{Binding ClassificationResultFrontal}" />
                             </StackPanel>
                         </materialDesign:Card>
                         <materialDesign:Card Margin="20">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="20">
                                 <TextBlock
-                                    Style="{StaticResource MaterialDesignOverlineTextBlock}" HorizontalAlignment="Center"
+                                    Style="{StaticResource MaterialDesignOverlineTextBlock}"
+                                    HorizontalAlignment="Center"
                                     Text="VOTE LATERAL" />
                                 <TextBlock
-                                    Style="{StaticResource MaterialDesignCaptionTextBlock}" HorizontalAlignment="Center"
+                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                                    HorizontalAlignment="Center"
                                     Text="{Binding ClassificationResultLateral}" />
                             </StackPanel>
                         </materialDesign:Card>
@@ -163,34 +173,42 @@
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <materialDesign:Chip
                                 Content="{Binding Threshold_TP}"
+                                Cursor="Arrow"
                                 Icon="TP" />
                             <materialDesign:Chip
                                 Content="{Binding Threshold_FP}"
+                                Cursor="Arrow"
                                 Icon="FP" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <materialDesign:Chip
                                 Content="{Binding Threshold_FN}"
+                                Cursor="Arrow"
                                 Icon="FN" />
                             <materialDesign:Chip
                                 Content="{Binding Threshold_TN}"
+                                Cursor="Arrow"
                                 Icon="TN" />
                         </StackPanel>
-                        <Separator Margin="20"/>
+                        <Separator Margin="20" />
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:Chip
                                 Content="Accuracy"
+                                Cursor="Arrow"
                                 Icon="{Binding Accuracy}" />
                             <materialDesign:Chip
                                 Content="F1-Score"
+                                Cursor="Arrow"
                                 Icon="{Binding F1Score}" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <materialDesign:Chip
-                                Content="Precision"
+                                Content="Precision" 
+                                Cursor="Arrow"
                                 Icon="{Binding Precision}" />
                             <materialDesign:Chip
                                 Content="Recall"
+                                Cursor="Arrow"
                                 Icon="{Binding Recall}" />
                         </StackPanel>
                     </StackPanel>
