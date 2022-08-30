@@ -27,14 +27,14 @@ class Classificator:
         self.models_frontal = {}
         self.models_lateral = {}
 
-    def load_models(self, folder="models"):
-        MODEL_F = os.path.join(folder, "frontal")
-        MODEL_L = os.path.join(folder, "lateral")
+        if torch.cuda.is_available():
+            print("## CUDA is available. ##")
+        else:
+            print("## CUDA is not available on this machine. ##")
 
-        # MODEL_F = "models\\frontal"
-        # MODEL_F = "models\\model_frontal.pt"
-        # MODEL_L = "models\\model_lateral.pt"
-        # MODEL_L = "models\\lateral"
+    def load_models(self, folder="models"):
+        model_f = os.path.join(folder, "frontal")
+        model_l = os.path.join(folder, "lateral")
 
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         for d in range(torch.cuda.device_count()):
@@ -51,16 +51,8 @@ class Classificator:
         print(f"Running on {device}")
 
         # Load Checkpoints:
-        dir_list_f = os.listdir(MODEL_F)
-        dir_list_l = os.listdir(MODEL_L)
-        # checkpoints_frontal = []
-        # checkpoints_lateral = []
-        # for m_f in dir_list_f:
-        #     m_f = os.path.join(MODEL_F,m_f)
-        #     checkpoints_frontal.append(torch.load(m_f, map_location=device))
-        # for m_l in dir_list_l:
-        #     m_l = os.path.join(MODEL_L, m_l)
-        #     checkpoints_lateral.append(torch.load(m_l, map_location=device))
+        dir_list_f = os.listdir(model_f)
+        dir_list_l = os.listdir(model_l)
 
         # Initialize model for frontal images:
         # model_frontal = models.resnet152()
@@ -68,7 +60,7 @@ class Classificator:
         # model_frontal.fc = torch.nn.Linear(model_frontal.fc.in_features, 1)
         # model_frontal = LSTMModel(1024*1024, 50, 2, 1, True)
         for m_f_orig in dir_list_f:
-            m_f = os.path.join(MODEL_F, m_f_orig)
+            m_f = os.path.join(model_f, m_f_orig)
             model_frontal = CnnLstmModel(512, 3, 1, True, device)
             checkpoint = torch.load(m_f, map_location=device)
             # model_frontal = torch.nn.DataParallel(model_frontal)
@@ -82,7 +74,7 @@ class Classificator:
         # model_lateral.fc = torch.nn.Linear(model_lateral.fc.in_features, 1)
         # model_lateral = LSTMModel(1024*1024, 50, 2, 1, True)
         for m_l_orig in dir_list_l:
-            m_l = os.path.join(MODEL_L, m_l_orig)
+            m_l = os.path.join(model_l, m_l_orig)
             model_lateral = CnnLstmModel(512, 3, 1, True, device)
             checkpoint = torch.load(m_l, map_location=device)
             # model_lateral = torch.nn.DataParallel(model_lateral)
@@ -131,16 +123,11 @@ class Classificator:
             print("Models not prepared, loading them now...")
             self.load_models()
 
-        IMAGE_L = image_lateral
-        IMAGE_F = image_frontal
-
-        # IMAGE_L = "images\\thrombYes\\263-01-aci-l-s.nii"
-        # IMAGE_L = "images\\thrombNo\\095-03-aci-r-s.nii"
-        # IMAGE_F = "images\\thrombYes\\263-01-aci-l-f.nii"
-        # IMAGE_F = "images\\thrombNo\\095-03-aci-r-f.nii"
+        image_l = image_lateral
+        image_f = image_frontal
 
         t1 = time.time()
-        data_prepared = self.load_images(IMAGE_F, IMAGE_L)
+        data_prepared = self.load_images(image_f, image_l)
 
         images_frontal = torch.unsqueeze(data_prepared['image'], 0)
         images_lateral = torch.unsqueeze(data_prepared['imageOtherView'], 0)
@@ -187,9 +174,6 @@ class Classificator:
         t3 = time.time()
         del images_frontal
         del images_lateral
-
-        # print(f"Estimate Frontal (has Thrombus?): {estimate_frontal == THROMBUS_YES} / Raw was {activation_f}")
-        # print(f"Estimate Lateral (has Thrombus?): {estimate_lateral == THROMBUS_YES} / Raw was {activation_l}")
 
         print(
             f"Timings: \n Init model:{t1 - t0} ({(t1 - t0) * 100 / (t3 - t0)}%)\nLoad/Prepare Data: {t2 - t1} ({(t2 - t1) * 100 / (t3 - t0)}%)\nClassification: {t3 - t2} ({(t3 - t2) * 100 / (t3 - t0)}%)")
