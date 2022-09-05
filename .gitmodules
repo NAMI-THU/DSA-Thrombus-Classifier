@@ -1,0 +1,4 @@
+[submodule "Python-Server"]
+	path = Python-Server
+	url = https://github.com/TheRisenPhoenix/DSA_CNN_Demonstrator
+	branch = predictor
