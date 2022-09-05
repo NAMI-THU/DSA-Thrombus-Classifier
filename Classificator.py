@@ -176,7 +176,7 @@ class Classificator:
         del images_lateral
 
         print(
-            f"Timings: \n Init model:{t1 - t0} ({(t1 - t0) * 100 / (t3 - t0)}%)\nLoad/Prepare Data: {t2 - t1} ({(t2 - t1) * 100 / (t3 - t0)}%)\nClassification: {t3 - t2} ({(t3 - t2) * 100 / (t3 - t0)}%)")
+            f"=== Timings: === \n Init model:{t1 - t0} ({(t1 - t0) * 100 / (t3 - t0)}%)\nLoad/Prepare Data: {t2 - t1} ({(t2 - t1) * 100 / (t3 - t0)}%)\nClassification: {t3 - t2} ({(t3 - t2) * 100 / (t3 - t0)}%)")
 
         return outputs_frontal, outputs_lateral, estimates_frontal, estimates_lateral
 

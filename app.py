@@ -33,6 +33,7 @@ def classification_requested():
     path_lateral = content["PathLateral"]
     model_frontal = content["ModelFrontal"]
     model_lateral = content["ModelLateral"]
+    print(f"Classification of {path_frontal} and {path_lateral} of model {model_frontal}")
     if not path_frontal or not os.path.exists(path_frontal) or not path_lateral or not os.path.exists(path_lateral):
         print("At least one of the requested paths does not exist.")
         return flask.Response(status=400)
@@ -41,5 +42,5 @@ def classification_requested():
                                                                                              model_frontal,
                                                                                              model_lateral)
     result = {'OutputFrontal': activations_f, 'OutputLateral': activations_l}
-    print("Classification done.")
+    print(f"Classification done. Results: {activations_f} | {activations_l}")
     return json.dumps(result)
