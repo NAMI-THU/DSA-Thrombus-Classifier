@@ -39,7 +39,6 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
         get => _imageDisplay;
         private set
         {
-            if (_imageDisplay == value) return;
             _imageDisplay = value;
             OnPropertyChanged();
         }
@@ -49,7 +48,6 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
     {
         get => _fileName;
         private set{
-            if (_fileName == value) return;
             _fileName = value;
 
             if (_fileName.EndsWith(".nii"))
@@ -93,7 +91,6 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
     {
         get => _filePrepared;
         private set{
-            if (_filePrepared == value) return;
             _filePrepared = value;
 
             if (_filePrepared)

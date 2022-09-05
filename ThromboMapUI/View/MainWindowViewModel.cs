@@ -94,7 +94,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         get => _conversionFrontalDone;
         set
         {
-            if (value == _conversionFrontalDone) return;
             _conversionFrontalDone = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(StartClassificationEnabled));
@@ -106,7 +105,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         get => _conversionLateralDone;
         set
         {
-            if (value == _conversionLateralDone) return;
             _conversionLateralDone = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(StartClassificationEnabled));
@@ -118,7 +116,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         get => _fileNameFrontal;
         set
         {
-            if (_fileNameFrontal == value) return;
             _fileNameFrontal = value;
             OnPropertyChanged();
         }
@@ -129,7 +126,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         get => _fileNameLateral;
         set
         {
-            if (_fileNameLateral == value) return;
             _fileNameLateral = value;
             OnPropertyChanged();
         }
@@ -140,7 +136,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         get => _classificationInProgress;
         private set
         {
-            if (_classificationInProgress == value) return;
             _classificationInProgress = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(StartClassificationEnabled));
@@ -154,7 +149,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         get => _modelsPrepared;
         set
         {
-            if (value == _modelsPrepared) return;
             _modelsPrepared = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(StartClassificationEnabled));
@@ -165,7 +159,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         get => _aiClassificationDone;
         set
         {
-            if (value == _aiClassificationDone) return;
             _aiClassificationDone = value;
             OnPropertyChanged();
         }
@@ -176,7 +169,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         get => _aiClassificationOutcomeCombined;
         set
         {
-            if (value.Equals(_aiClassificationOutcomeCombined)) return;
             _aiClassificationOutcomeCombined = value;
             
             OnPropertyChanged();
@@ -223,7 +215,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         get => _modelSelectionFolderBadge;
         set
         {
-            if (Equals(value, _modelSelectionFolderBadge)) return;
             _modelSelectionFolderBadge = value;
             OnPropertyChanged();
         }
@@ -234,7 +225,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         get => _classificationResultText;
         private set
         {
-            if (value == _classificationResultText) return;
             _classificationResultText = value;
             OnPropertyChanged();
         }
@@ -245,7 +235,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         get => _classificationResultColor;
         private set
         {
-            if (Equals(value, _classificationResultColor)) return;
             _classificationResultColor = value;
             OnPropertyChanged();
         }
@@ -256,7 +245,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         get => _classificationProgressPercentage;
         set
         {
-            if (value.Equals(_classificationProgressPercentage)) return;
             _classificationProgressPercentage = value;
             OnPropertyChanged();
         }
@@ -267,7 +255,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         get => _classificationResultFrontal;
         private set
         {
-            if (value.Equals(_classificationResultFrontal)) return;
             _classificationResultFrontal = value;
             OnPropertyChanged();
         }
@@ -278,7 +265,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         get => _classificationResultLateral;
         private set
         {
-            if (value.Equals(_classificationResultLateral)) return;
             _classificationResultLateral = value;
             OnPropertyChanged();
         }
@@ -289,7 +275,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         get => _modelSelectionFolder;
         set
         {
-            if (value == _modelSelectionFolder) return;
             _modelSelectionFolder = value;
             OnPropertyChanged();
         }
