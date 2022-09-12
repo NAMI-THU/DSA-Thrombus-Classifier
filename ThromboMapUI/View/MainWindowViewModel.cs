@@ -44,6 +44,9 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private RelayCommand<object>? _windowLoadedCommand;
 
 
+    public ICommand ChangeFrontalNiftiImageCommand { get; set; }
+    public ICommand ChangeLateralNiftiImageCommand { get; set; }
+    
     public ICommand BrowseModelFolderCommand{
         get
         {
@@ -67,7 +70,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     {
         get
         {
-            return _lateralPreparedNotification ??= new RelayCommand<string>(s =>
+            return _lateralPreparedNotification ??= new RelayCommand<string>(async s =>
             {
                 FileNameLateral = s;
                 ConversionLateralDone = true;
@@ -97,6 +100,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
             _conversionFrontalDone = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(StartClassificationEnabled));
+            UpdateImages();
         }
     }
 
@@ -108,6 +112,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
             _conversionLateralDone = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(StartClassificationEnabled));
+            UpdateImages();
         }
     }
 
@@ -375,6 +380,14 @@ public class MainWindowViewModel : INotifyPropertyChanged
             ClassificationResultText = "Not run yet";
             ClassificationInProgress = false;
         }
+    }
+
+    private async void UpdateImages()
+    {
+        if (!ConversionFrontalDone || !ConversionLateralDone) return;
+        var imageResponse = await AiServiceCommunication.LoadImages(FileNameFrontal, FileNameLateral);
+        ChangeFrontalNiftiImageCommand.Execute(imageResponse.img1);
+        ChangeLateralNiftiImageCommand.Execute(imageResponse.img2);
     }
 
     private async void LoadInterpreter()

@@ -18,6 +18,7 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
 {
     private RelayCommand<object>? _browseCommand;
     private RelayCommand<object>? _convertCommand;
+    private RelayCommand<float[][]>? _changeImageCommand;
     private bool _convertEnabled;
     private bool _convertInProgress;
     private string _fileName = "";
@@ -54,7 +55,6 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
             {
                 ConvertEnabled = false;
                 FilePrepared = true;
-                LoadImage();
             }
             else
             {
@@ -143,7 +143,12 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
 
     public ICommand BrowseCommand
     {
-        get { return _browseCommand ??= new RelayCommand<object>(_=>BrowseOnClick()); }
+        get { return _browseCommand ??= new RelayCommand<object>(_ => BrowseOnClick()); }
+    }
+
+    public ICommand ChangeImageCommand
+    {
+        get { return _changeImageCommand ??= new RelayCommand<float[][]>(array => ImageInjected(array)); }
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -182,9 +187,8 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private async void LoadImage()
+    private async void ImageInjected(float[][] array)
     {
-        var bitmap = await ImageUtil.LoadNiftiToImage(FileName).ConfigureAwait(false);
-        ImageDisplay = bitmap;
+        ImageDisplay = await ImageUtil.Array2Image(array).ConfigureAwait(false);
     }
 }

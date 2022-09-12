@@ -14,6 +14,8 @@ namespace ThromboMapUI
             var vm = (MainWindowViewModel)DataContext;
             FrontalNiftiView.FilePreparedNotificationCommand = vm.FrontalPreparedNotification;
             LateralNiftiView.FilePreparedNotificationCommand = vm.LateralPreparedNotification;
+            vm.ChangeFrontalNiftiImageCommand = FrontalNiftiView.ChangeImageCommand;
+            vm.ChangeLateralNiftiImageCommand = LateralNiftiView.ChangeImageCommand;
         }
     }
 }

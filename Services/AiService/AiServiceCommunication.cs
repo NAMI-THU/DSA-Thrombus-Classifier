@@ -24,6 +24,16 @@ public static class AiServiceCommunication
         var request = new LoadModelsRequest { Directory = directory};
         await Post(request, "/AiService/PreloadModels");
     }
+
+    public static async Task<ImageResponse> LoadImages(string imageFrontal, string imageLateral, bool normalized=false)
+    {
+        var request = new LoadImagesRequest
+            { PathFrontal = imageFrontal, PathLateral = imageLateral, Normalized = normalized };
+        var response = await Post(request, "/AiService/LoadImages");
+        var content = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<ImageResponse>(content) ??
+               throw new ExternalException("Failed to convert image response");
+    }
     
     private static async Task<HttpResponseMessage> Post(object request, string uri) {
         var json = JsonConvert.SerializeObject(request);

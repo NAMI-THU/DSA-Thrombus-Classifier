@@ -53,4 +53,38 @@ public static class ImageUtil
         });
         return result;
     }
+
+    public static async Task<ImageSource> Array2Image(float[][] image)
+    {
+        var result = await Task.Run(() =>
+        {
+            var width = image.Length;
+            var height = image[0].Length;
+            var newBitmap = new Bitmap(width, height);
+
+            for (var j = 0; j < width; j++)
+            {
+                for (var i = 0; i < height; i++)
+                {
+                    var c = (int)image[i][j];
+                    var color = Color.FromArgb(c, c, c);
+                    newBitmap.SetPixel(j, height - i - 1, color);
+                }
+            }
+
+            var handle = newBitmap.GetHbitmap();
+            try
+            {
+                var img = Imaging.CreateBitmapSourceFromHBitmap(handle, IntPtr.Zero, Int32Rect.Empty,
+                    BitmapSizeOptions.FromEmptyOptions());
+                img.Freeze();
+                return img;
+            } // We need to this manually to avoid a memory leak
+            finally
+            {
+                DeleteObject(handle);
+            }
+        });
+        return result;
+    }
 }

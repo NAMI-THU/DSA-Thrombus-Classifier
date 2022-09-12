@@ -12,7 +12,7 @@
              Background="{DynamicResource MaterialDesignPaper}"
              FontFamily="{DynamicResource MaterialDesignFont}"
              mc:Ignorable="d"
-             d:DesignHeight="400" d:DesignWidth="400"
+             d:DesignHeight="200" d:DesignWidth="200"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <GroupBox
         Style="{StaticResource MaterialDesignCardGroupBox}"
@@ -46,7 +46,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" Source="{Binding ImageDisplay}" MinHeight="200px" MinWidth="200px" MaxHeight="800px" MaxWidth="800px"></Image>
+                <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" Source="{Binding ImageDisplay}" MinHeight="100px" MinWidth="100px" MaxHeight="300px" MaxWidth="300px"></Image>
                 <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Content="{Binding FileName}"/>  
                 <Button Grid.Row="2" Grid.Column="0" Margin="10" Command="{Binding BrowseCommand}">Browse</Button>
                 <Button Grid.Row="2" Grid.Column="1" Margin="10" 
