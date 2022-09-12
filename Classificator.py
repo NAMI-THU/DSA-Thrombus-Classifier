@@ -26,6 +26,7 @@ class Classificator:
         self.models_loaded = False
         self.models_frontal = {}
         self.models_lateral = {}
+        self.preparedImages = {}
 
         if torch.cuda.is_available():
             print("## CUDA is available. ##")
@@ -84,7 +85,7 @@ class Classificator:
 
         self.models_loaded = True
 
-    def load_images(self, image_f, image_l):
+    def load_images(self, image_f, image_l, return_normalized=False):
         image_data = nibabel.load(image_f).get_fdata(caching='unchanged',
                                                      dtype=np.float32) * 0.062271062  # = 255/4095.0
         image_data = image_data.astype(np.uint8)
@@ -111,28 +112,39 @@ class Classificator:
 
         augmentation.applyTransform()
 
+        if not return_normalized:
+            img1, img2 = augmentation.getImageData()
+
         augmentation.zeroPaddingEqualLength()
         augmentation.normalizeData()
 
-        return augmentation.convertToTensor()
+        if return_normalized:
+            img1, img2 = augmentation.getImageData()
 
-    def do_classification(self, image_frontal, image_lateral, mf="", ml=""):
+        return augmentation.convertToTensor(), {'img1': img1, 'img2': img2}
+
+    def prepare_images(self, image_frontal, image_lateral, normalized):
+        data_prepared, imagedict = self.load_images(image_frontal, image_lateral, normalized)
+        self.preparedImages[hash(image_frontal+image_lateral)] = data_prepared
+        return imagedict
+
+    def do_classification(self, image_f, image_l, mf="", ml=""):
         t0 = time.time()
 
         if not self.models_loaded:
             print("Models not prepared, loading them now...")
             self.load_models()
 
-        image_l = image_lateral
-        image_f = image_frontal
+        h = hash(image_f + image_l)
+
+        if not self.preparedImages[h]:
+            raise Exception("Images have not been loaded yet")
+
 
         t1 = time.time()
-        data_prepared = self.load_images(image_f, image_l)
 
-        images_frontal = torch.unsqueeze(data_prepared['image'], 0)
-        images_lateral = torch.unsqueeze(data_prepared['imageOtherView'], 0)
-
-        t2 = time.time()
+        images_frontal = torch.unsqueeze(self.preparedImages[h]['image'], 0)
+        images_lateral = torch.unsqueeze(self.preparedImages[h]['imageOtherView'], 0)
 
         outputs_frontal = []
         outputs_lateral = []
@@ -171,12 +183,14 @@ class Classificator:
             estimate_lateral = THROMBUS_NO if activation_l <= 0.5 else THROMBUS_YES
             outputs_lateral.append(activation_l)
             estimates_lateral.append(estimate_lateral)
-        t3 = time.time()
+        t2 = time.time()
         del images_frontal
         del images_lateral
 
+        # TODO: Possible memory leak: remove images (maybe only when new ones are loaded?)
+
         print(
-            f"=== Timings: === \n Init model:{t1 - t0} ({(t1 - t0) * 100 / (t3 - t0)}%)\nLoad/Prepare Data: {t2 - t1} ({(t2 - t1) * 100 / (t3 - t0)}%)\nClassification: {t3 - t2} ({(t3 - t2) * 100 / (t3 - t0)}%)")
+            f"=== Timings: === \n Init model:{t1 - t0} ({(t1 - t0) * 100 / (t2 - t0)}%)\nClassification: {t2 - t1} ({(t2 - t1) * 100 / (t2 - t0)}%)")
 
         return outputs_frontal, outputs_lateral, estimates_frontal, estimates_lateral
 

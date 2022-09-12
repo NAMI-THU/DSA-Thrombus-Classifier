@@ -293,3 +293,7 @@ class DataAugmentation(object):
             self.tracker = IndexTracker(ax, self.data['image'], 'Image', self.data['keypoints'])
             fig.canvas.mpl_connect('scroll_event', self.tracker.onscroll)
             plt.show()
+
+    def getImageData(self):
+        seq_length = self.data['image'].shape[2]
+        return np.copy(self.data['image'][:, :, int(seq_length / 2)]), np.copy(self.data['imageOtherView'][:, :, int(seq_length / 2)])
