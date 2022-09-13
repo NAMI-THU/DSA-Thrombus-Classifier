@@ -21,13 +21,13 @@ public class ResultInterpreter
         }
     }
 
-    public int TruePositives { get; private set; }
+    public double TruePositives { get; private set; }
 
-    public int TrueNegatives { get; private set; }
+    public double TrueNegatives { get; private set; }
     
-    public int FalsePositives { get; private set; }
+    public double FalsePositives { get; private set; }
     
-    public int FalseNegatives { get; private set; }
+    public double FalseNegatives { get; private set; }
     
     public string TruePositivesPercentage { get; private set; } = "0%";
 
@@ -41,6 +41,7 @@ public class ResultInterpreter
     public string F1ScoreString { get; private set; } = "0%";
     public string PrecisionString { get; private set; } = "0%";
     public string RecallString { get; private set; } = "0%";
+    public string MCCString { get; private set; } = "0%";
 
 
     public async Task LoadData()
@@ -101,7 +102,7 @@ public class ResultInterpreter
         return rawModelOutput >= threshold;
     }
 
-    private (int, int, int, int) CalculateConfusionMatrixEntries(double threshold)
+    private (double, double, double, double) CalculateConfusionMatrixEntries(double threshold)
     {
         int tp = 0, tn = 0, fp = 0, fn = 0;
         // Chose Test or Validation
@@ -153,20 +154,21 @@ public class ResultInterpreter
             RecallString = "0%";
             PrecisionString = "0%";
             F1ScoreString = "0%";
+            MCCString = "0%";
         }
         else
         {
-            TruePositivesPercentage = $"{((double)tp / sum) * 100:F2}%";
-            TrueNegativesPercentage = $"{((double)tn / sum) * 100:F2}%";
-            FalseNegativesPercentage = $"{((double)fn / sum) * 100:F2}%";
-            FalsePositivesPercentage = $"{((double)fp / sum) * 100:F2}%";
+            TruePositivesPercentage = $"{(tp / sum) * 100:F2}%";
+            TrueNegativesPercentage = $"{(tn / sum) * 100:F2}%";
+            FalseNegativesPercentage = $"{(fn / sum) * 100:F2}%";
+            FalsePositivesPercentage = $"{(fp / sum) * 100:F2}%";
             
-            var precision = (double)tp / (fp + tp);
-            var recall = (double)tp / (fn + tp);
+            var precision = tp / (fp + tp);
+            var recall = tp / (fn + tp);
             if (double.IsNaN(precision)) { precision = 0;}
             if (double.IsNaN(recall)) { recall = 0;}
             
-            AccuracyString = $"{((double)(tp +fp) / sum )* 100:F0}%";
+            AccuracyString = $"{((tp +fp) / sum )* 100:F0}%";
             RecallString = $"{recall* 100:F0}%";
             PrecisionString = $"{precision* 100:F0}%";
 
@@ -178,6 +180,9 @@ public class ResultInterpreter
             {
                 F1ScoreString = $"{(2 * precision * recall) * 100 / (precision + recall):F0}%";
             }
+
+            var mcc = (tn * tp - fn * fp) / Math.Sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn));
+            MCCString = double.IsNaN(mcc) ? "0" : $"{mcc:F2}";
         }
     }
 
@@ -188,8 +193,8 @@ public class ResultInterpreter
         var distance = 0.0;
         for(var t = 0.0; t<=1.0;t+=0.005){
             var (tp, tn, fp, fn) = CalculateConfusionMatrixEntries(t);
-            var tpr = (double) tp / (tp + fn);
-            var fpr = (double) fp / (fp + tn);
+            var tpr = tp / (tp + fn);
+            var fpr = fp / (fp + tn);
             var d = Math.Sqrt(Math.Pow(1 - fpr, 2) + Math.Pow(tpr, 2));
             if (!(d >= distance)) continue;
             distance = d;

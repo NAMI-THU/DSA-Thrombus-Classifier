@@ -200,6 +200,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(F1Score));
             OnPropertyChanged(nameof(Precision));
             OnPropertyChanged(nameof(Recall));
+            OnPropertyChanged(nameof(MCC));
             
             UpdateClassificationText();
         }
@@ -214,6 +215,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public string F1Score => _resultInterpreter.F1ScoreString;
     public string Precision => _resultInterpreter.PrecisionString;
     public string Recall => _resultInterpreter.RecallString;
+    public string MCC => _resultInterpreter.MCCString;
 
     public PackIcon ModelSelectionFolderBadge
     {
