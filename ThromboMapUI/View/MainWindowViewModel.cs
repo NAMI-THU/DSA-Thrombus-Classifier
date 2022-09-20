@@ -88,7 +88,11 @@ public class MainWindowViewModel : INotifyPropertyChanged
     {
         get
         {
-            return _windowLoadedCommand ??= new RelayCommand<object>(_ => LoadInterpreter());
+            return _windowLoadedCommand ??= new RelayCommand<object>(_ =>
+            {
+                LoadInterpreter();
+                RestoreUserSettings();
+            });
         }
     }
 
@@ -277,7 +281,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    private string? ModelSelectionFolder
+    public string? ModelSelectionFolder
     {
         get => _modelSelectionFolder;
         set
@@ -315,18 +319,27 @@ public class MainWindowViewModel : INotifyPropertyChanged
         };
         if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
         {
-            var structureOkay = Validation.CheckModelFolderStructure(dialog.FileName);
-            if (structureOkay)
-            {
-                ModelSelectionFolder = dialog.FileName;
-                ModelSelectionFolderBadge = new PackIcon { Kind = PackIconKind.Sync };
-                PreloadModels();
-            }
-            else
+            var success = UpdateModelPath(dialog.FileName);
+            if(!success)
             {
                 MessageBox.Show("The structure of the selected directory is invalid. Ensure that the selected folder has a frontal and lateral subdirectory, in which the respective model (or multiple model-folds) is. Additionally, make sure that the filenames of both versions are identical (that means, corresponding model names should have the same name, e.g. frontal/fold1.pt and lateral/fold1.pt or frontal/model.pt and lateral/model.pt", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+    }
+
+    private bool UpdateModelPath(string path)
+    {
+        var structureOkay = Validation.CheckModelFolderStructure(path);
+        if (structureOkay)
+        {
+            ModelSelectionFolder = path;
+            ModelSelectionFolderBadge = new PackIcon { Kind = PackIconKind.Sync };
+            PreloadModels();
+            UserPersistence.Default.ModelPath = path;
+            return true;
+        }
+
+        return false;
     }
 
     private async void StartClassificationOnClick()
@@ -396,5 +409,14 @@ public class MainWindowViewModel : INotifyPropertyChanged
     {
         await _resultInterpreter.LoadData().ConfigureAwait(false);
         AiClassificationThreshold = _resultInterpreter.CalculateBestThreshold();
+    }
+
+    private void RestoreUserSettings()
+    {
+        var path = UserPersistence.Default.ModelPath;
+        if (path is not null)
+        {
+            UpdateModelPath(path);
+        }
     }
 }
