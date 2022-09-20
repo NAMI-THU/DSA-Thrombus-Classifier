@@ -10,3 +10,6 @@ In order to update the submodule Python-Server, simply run
 ```
 git submodule update --remote
 ```
+
+Important:
+When shipping a new version, make sure, that you do exclude the settings file! (Or tell the user how to migrate)
