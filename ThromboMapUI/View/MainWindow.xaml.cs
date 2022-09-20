@@ -16,6 +16,9 @@ namespace ThromboMapUI
             LateralNiftiView.FilePreparedNotificationCommand = vm.LateralPreparedNotification;
             vm.ChangeFrontalNiftiImageCommand = FrontalNiftiView.ChangeImageCommand;
             vm.ChangeLateralNiftiImageCommand = LateralNiftiView.ChangeImageCommand;
+
+            FrontalNiftiView.ResetFilesOtherCommand = LateralNiftiView.ResetFilesCommand;
+            LateralNiftiView.ResetFilesOtherCommand = FrontalNiftiView.ResetFilesCommand;
         }
     }
 }

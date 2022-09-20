@@ -62,20 +62,36 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             return _frontalPreparedNotification ??= new RelayCommand<string>(s =>
             {
-                FileNameFrontal = s;
-                ConversionFrontalDone = true;
+                if (!string.IsNullOrEmpty(s))
+                {
+                    FileNameFrontal = s;
+                    ConversionFrontalDone = true;
+                }
+                else
+                {
+                    FileNameFrontal = "";
+                    ConversionFrontalDone = false;  // Reset
+                }
             });
         }
     }
-
+    
     public ICommand LateralPreparedNotification
     {
         get
         {
-            return _lateralPreparedNotification ??= new RelayCommand<string>(async s =>
+            return _lateralPreparedNotification ??= new RelayCommand<string>(s =>
             {
-                FileNameLateral = s;
-                ConversionLateralDone = true;
+                if (!string.IsNullOrEmpty(s))
+                {
+                    FileNameLateral = s;
+                    ConversionLateralDone = true;
+                }
+                else
+                {
+                    FileNameLateral = "";
+                    ConversionLateralDone = false;
+                }
             });
         }
     }

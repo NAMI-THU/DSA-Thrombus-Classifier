@@ -19,6 +19,7 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
     private RelayCommand<object>? _browseCommand;
     private RelayCommand<object>? _convertCommand;
     private RelayCommand<float[][]>? _changeImageCommand;
+    private RelayCommand<object>? _resetFilesCommand;
     private bool _convertEnabled;
     private bool _convertInProgress;
     private string _fileName = "";
@@ -34,6 +35,7 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
     }
 
     public ICommand? FilePreparedNotificationCommand { get; set; }
+    public ICommand? ResetFilesOtherCommand { get; set; }
 
     public ImageSource? ImageDisplay
     {
@@ -51,12 +53,14 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
         private set{
             _fileName = value;
 
+            ConvertEnabled = false;
+            FilePrepared = false;
+            
             if (_fileName.EndsWith(".nii"))
             {
-                ConvertEnabled = false;
                 FilePrepared = true;
             }
-            else
+            else if(!string.IsNullOrEmpty(_fileName))
             {
                 ConvertEnabled = true;
             }
@@ -98,6 +102,12 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
                 HeaderColor = new SolidColorBrush(new PaletteHelper().GetTheme().PrimaryDark.Color);
                 HeaderIcon = PackIconKind.Check;
                 FilePreparedNotificationCommand?.Execute(FileName);
+            }
+            else
+            {
+                HeaderColor = Brushes.DarkRed;
+                HeaderIcon = PackIconKind.Error;
+                FilePreparedNotificationCommand?.Execute(null);
             }
             OnPropertyChanged();
         }
@@ -151,6 +161,18 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
         get { return _changeImageCommand ??= new RelayCommand<float[][]>(array => ImageInjected(array)); }
     }
 
+    public ICommand ResetFilesCommand
+    {
+        get
+        {
+            return _resetFilesCommand ??= new RelayCommand<object>(_ =>
+            {
+                FileName = "";
+                ImageDisplay = null;
+            });
+        }
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
@@ -159,10 +181,16 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
 
     private void BrowseOnClick()
     {
-        var openFileDialog = new OpenFileDialog();
-        if(openFileDialog.ShowDialog() == true)
+        if (FilePrepared)
         {
-           FileName = openFileDialog.FileName;
+            ResetFilesCommand.Execute(null); // Remove Image
+            ResetFilesOtherCommand?.Execute(null);
+        }
+        
+        var openFileDialog = new OpenFileDialog();
+        if (openFileDialog.ShowDialog() == true)
+        {
+            FileName = openFileDialog.FileName;
         }
     }
 
