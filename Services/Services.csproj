@@ -6,6 +6,8 @@
         <Nullable>enable</Nullable>
         <Authors>Technische Hochschule Ulm</Authors>
         <Company>Technische Hochschule Ulm</Company>
+        <PackageVersion>1.1.0</PackageVersion>
+        <AssemblyVersion>1.1.0</AssemblyVersion>
     </PropertyGroup>
 
     <ItemGroup>
