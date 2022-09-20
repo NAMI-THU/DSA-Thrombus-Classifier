@@ -9,6 +9,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using MaterialDesignThemes.Wpf;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using Serilog;
+using Services;
 using Services.AiService;
 using Services.AiService.Interpreter;
 using Services.AiService.Responses;
@@ -284,7 +286,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public string? ModelSelectionFolder
     {
         get => _modelSelectionFolder;
-        set
+        private set
         {
             _modelSelectionFolder = value;
             OnPropertyChanged();
@@ -367,6 +369,13 @@ public class MainWindowViewModel : INotifyPropertyChanged
         AiClassificationOutcomeCombined = averages.Item1;
         ClassificationResultFrontal = $"{averages.Item2:F2}";
         ClassificationResultLateral = $"{averages.Item3:F2}";
+
+        if (Configuration.EnableEvaluationSetup)
+        {
+            var result = MessageBox.Show("Was there a thrombus in this sequence? \n(You can disable this evaluation mode in appsettings.json)","Service evaluation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var truth = result == MessageBoxResult.Yes ? 1 : 0;
+            Log.Information("Classification evaluated: {@OutputFrontal}, {@OutputLateral}, {@Truth}. {@ModelPath} with {@ImageFrontal} and {@ImageLateral}", averages.Item2, averages.Item3, truth, ModelSelectionFolder, FileNameFrontal, FileNameLateral);
+        }
     }
 
     private async void PreloadModels()
