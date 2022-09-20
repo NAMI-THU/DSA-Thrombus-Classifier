@@ -23,7 +23,7 @@ class Classificator:
 
     def __init__(self):
         torch.set_num_threads(8)
-        self.models_loaded = False
+        self.models_loaded = {'f': "", 'l': ""}
         self.models_frontal = {}
         self.models_lateral = {}
         self.preparedImages = {}
@@ -36,6 +36,11 @@ class Classificator:
     def load_models(self, folder="models"):
         model_f = os.path.join(folder, "frontal")
         model_l = os.path.join(folder, "lateral")
+
+        del self.models_lateral
+        del self.models_frontal
+        self.models_lateral = {}
+        self.models_frontal = {}
 
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         for d in range(torch.cuda.device_count()):
@@ -83,7 +88,12 @@ class Classificator:
             model_lateral.to(device)
             self.models_lateral[m_l_orig] = model_lateral
 
-        self.models_loaded = True
+        self.models_loaded = {'f': model_f, 'l': model_l}
+
+    def check_models_already_loaded(self, folder):
+        new_f = os.path.join(folder, "frontal")
+        new_l = os.path.join(folder, "lateral")
+        return self.models_loaded['f'] == new_f and self.models_loaded['l'] == new_l
 
     def load_images(self, image_f, image_l, return_normalized=False):
         image_data = nibabel.load(image_f).get_fdata(caching='unchanged',
@@ -125,7 +135,7 @@ class Classificator:
 
     def prepare_images(self, image_frontal, image_lateral, normalized):
         data_prepared, imagedict = self.load_images(image_frontal, image_lateral, normalized)
-        self.preparedImages[hash(image_frontal+image_lateral)] = data_prepared
+        self.preparedImages[hash(image_frontal + image_lateral)] = data_prepared
         return imagedict
 
     def do_classification(self, image_f, image_l, mf="", ml=""):
@@ -139,7 +149,6 @@ class Classificator:
 
         if not self.preparedImages[h]:
             raise Exception("Images have not been loaded yet")
-
 
         t1 = time.time()
 

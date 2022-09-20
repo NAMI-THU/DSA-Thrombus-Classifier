@@ -14,10 +14,10 @@ classificator = Classificator.Classificator()
 
 @app.route("/AiService/PreloadModels", methods=["POST"])
 def prepare_models_requested():
-    print("Preloading of models requested...")
     folder = request.get_json()["Directory"]
-    # Todo: Ignore this
-    if classificator.models_loaded:
+    print(f"Preloading of models requested... ({folder})")
+
+    if classificator.check_models_already_loaded(folder):
         print("Models have already been loaded before.")
         return flask.Response(status=200)
 
