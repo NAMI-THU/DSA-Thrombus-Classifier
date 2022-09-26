@@ -40,6 +40,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private RelayCommand<string>? _lateralPreparedNotification;
     private string? _modelSelectionFolder;
     private PackIcon _modelSelectionFolderBadge = new(){Kind = PackIconKind.Alert};
+    private PackIconKind _classificationResultIcon = PackIconKind.QuestionMark;
     private bool _modelsPrepared;
 
     private RelayCommand<object>? _startClassificationCommand;
@@ -269,6 +270,16 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
+    public PackIconKind ClassificationResultIcon
+    {
+        get => _classificationResultIcon;
+        private set
+        {
+            _classificationResultIcon = value;
+            OnPropertyChanged();
+        }
+    }
+
     public double ClassificationProgressPercentage
     {
         get => _classificationProgressPercentage;
@@ -320,12 +331,14 @@ public class MainWindowViewModel : INotifyPropertyChanged
         if (_resultInterpreter.HasThrombus(AiClassificationOutcomeCombined))
         {
             ClassificationResultText = "Thrombus detected!";
-            ClassificationResultColor = Brushes.DarkRed;
+            ClassificationResultColor = Brushes.OrangeRed;
+            ClassificationResultIcon = PackIconKind.AlertCircle;
         }
         else
         {
             ClassificationResultText = "No Thrombus detected.";
-            ClassificationResultColor = Brushes.DarkGreen;
+            ClassificationResultColor = Brushes.SpringGreen;
+            ClassificationResultIcon = PackIconKind.CheckCircle;
         }
     }
 

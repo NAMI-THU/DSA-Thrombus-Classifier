@@ -28,7 +28,21 @@
         <StackPanel Orientation="Vertical">
             <TextBlock
                 Style="{StaticResource MaterialDesignHeadline2TextBlock}"
-                Text="Thrombomap" Margin="10" HorizontalAlignment="Center" />
+                Text="DSA Classifier" Margin="10" HorizontalAlignment="Center" />
+            <materialDesign:Card
+                materialDesign:ElevationAssist.Elevation="Dp16" UniformCornerRadius="15"
+                Margin="10" Padding="5" >
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <materialDesign:PackIcon Kind="{Binding ClassificationResultIcon}" Height="40" Width="40" Foreground="{Binding ClassificationResultColor}"/>
+                    <TextBlock
+                        Margin="40,0,40,0"
+                        Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+                        Foreground="{Binding ClassificationResultColor}"
+                        HorizontalAlignment="Center"
+                        Text="{Binding ClassificationResultText}" />
+                    <materialDesign:PackIcon Kind="{Binding ClassificationResultIcon}" Height="40" Width="40" Foreground="{Binding ClassificationResultColor}"/>
+                </StackPanel>
+            </materialDesign:Card>
             <Grid Margin="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
@@ -60,11 +74,12 @@
                                            BadgeColorZoneMode="SecondaryMid">
                         <Button Command="{Binding BrowseModelFolderCommand}">Select Model Folder</Button>
                     </materialDesign:Badged>
-                    <TextBlock Style="{StaticResource MaterialDesignOverlineTextBlock}" Text="{Binding ModelSelectionFolder}" IsEnabled="False" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,10,0,20"/>
+                    <TextBlock Style="{StaticResource MaterialDesignOverlineTextBlock}"
+                               Text="{Binding ModelSelectionFolder}" IsEnabled="False" HorizontalAlignment="Center"
+                               TextAlignment="Center" Margin="0,10,0,0" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button
                             Style="{StaticResource MaterialDesignFloatingActionAccentButton}"
-                            Margin="8 0 0 0"
                             Command="{Binding StartClassificationCommand}"
                             materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ClassificationInProgress}"
                             materialDesign:ButtonProgressAssist.IsIndeterminate="True"
@@ -123,12 +138,6 @@
                             SelectionStart="{Binding AiClassificationThreshold}"
                             SelectionEnd="1"
                             IsSelectionRangeEnabled="True" />
-                    <TextBlock
-                        Style="{StaticResource MaterialDesignHeadline4TextBlock}"
-                        Foreground="{Binding ClassificationResultColor}"
-                        HorizontalAlignment="Center"
-                        Margin="0,10,0,0"
-                        Text="{Binding ClassificationResultText}" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <materialDesign:Card Margin="20">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="20">

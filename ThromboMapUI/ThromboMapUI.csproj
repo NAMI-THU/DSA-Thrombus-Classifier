@@ -11,12 +11,12 @@
         <Company>Technische Hochschule Ulm</Company>
         <Product>ThromboMap</Product>
         <ApplicationIcon>Icon\ai.ico</ApplicationIcon>
-        <AssemblyVersion>1.1.0</AssemblyVersion>
-        <PackageVersion>1.1.0</PackageVersion>
+        <AssemblyVersion>1.1.1</AssemblyVersion>
+        <PackageVersion>1.1.1</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="MaterialDesignThemes" Version="4.6.0" />
+      <PackageReference Include="MaterialDesignThemes" Version="4.6.1" />
       <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0" />
       <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
       <PackageReference Include="Nifti.NET" Version="1.1.4" />
