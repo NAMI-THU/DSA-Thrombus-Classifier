@@ -165,6 +165,8 @@ class Classificator:
             for m_f in self.models_frontal:
                 output_frontal = m_f(images_frontal)
                 activation_f = torch.sigmoid(output_frontal).item()
+                del output_frontal
+                torch.cuda.empty_cache()
                 estimate_frontal = THROMBUS_NO if activation_f <= 0.5 else THROMBUS_YES
                 outputs_frontal.append(activation_f)
                 estimates_frontal.append(estimate_frontal)
@@ -173,6 +175,8 @@ class Classificator:
         else:
             output_frontal = self.models_frontal[mf](images_frontal)
             activation_f = torch.sigmoid(output_frontal).item()
+            del output_frontal
+            torch.cuda.empty_cache()
             estimate_frontal = THROMBUS_NO if activation_f <= 0.5 else THROMBUS_YES
             outputs_frontal.append(activation_f)
             estimates_frontal.append(estimate_frontal)
@@ -181,6 +185,8 @@ class Classificator:
             for m_l in self.models_lateral:
                 output_lateral = m_l(images_lateral)
                 activation_l = torch.sigmoid(output_lateral).item()
+                del output_lateral
+                torch.cuda.empty_cache()
                 estimate_lateral = THROMBUS_NO if activation_l <= 0.5 else THROMBUS_YES
                 outputs_lateral.append(activation_l)
                 estimates_lateral.append(estimate_lateral)
@@ -189,6 +195,8 @@ class Classificator:
         else:
             output_lateral = self.models_lateral[ml](images_lateral)
             activation_l = torch.sigmoid(output_lateral).item()
+            del output_lateral
+            torch.cuda.empty_cache()
             estimate_lateral = THROMBUS_NO if activation_l <= 0.5 else THROMBUS_YES
             outputs_lateral.append(activation_l)
             estimates_lateral.append(estimate_lateral)
