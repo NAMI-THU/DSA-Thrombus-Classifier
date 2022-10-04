@@ -16,7 +16,7 @@ from ImageUtils import ImageUtils
 THROMBUS_NO = 0.214
 THROMBUS_YES = 0.786
 
-MINIMUM_FREE_GPU_VRAM_GB = 4
+MINIMUM_FREE_GPU_VRAM_GB = 3.99
 
 
 class Classificator:
@@ -27,6 +27,7 @@ class Classificator:
         self.models_frontal = {}
         self.models_lateral = {}
         self.preparedImages = {}
+        self.run_on_cuda = False
 
         if torch.cuda.is_available():
             print("## CUDA is available. ##")
@@ -46,13 +47,15 @@ class Classificator:
         for d in range(torch.cuda.device_count()):
             device = torch.device(f"cuda:{d}")
             (free, total) = torch.cuda.mem_get_info(device)
-            gb = free * 9.31 * math.pow(10, -10)
-            print(f"Device {device} has {gb} free RAM.")
-            if gb < MINIMUM_FREE_GPU_VRAM_GB:
+            gb_total = total / 1073741824
+            gb_free = total / 1073741824
+            print(f"Device {device} has {gb_total} total RAM. Currently free: {gb_free}")
+            if gb_total < MINIMUM_FREE_GPU_VRAM_GB:
                 print(f"This is not enough, we need at least {MINIMUM_FREE_GPU_VRAM_GB} GB.")
                 device = torch.device("cpu")
             else:
                 device = torch.device(f"cuda:{d}")
+                self.run_on_cuda = True
 
         print(f"Running on {device}")
 
@@ -131,12 +134,27 @@ class Classificator:
         if return_normalized:
             img1, img2 = augmentation.getImageData()
 
-        return augmentation.convertToTensor(), {'img1': img1, 'img2': img2}
+        tens = augmentation.convertToTensor()
+        return tens, {'img1': img1, 'img2': img2}
 
     def prepare_images(self, image_frontal, image_lateral, normalized):
         data_prepared, imagedict = self.load_images(image_frontal, image_lateral, normalized)
         self.preparedImages[hash(image_frontal + image_lateral)] = data_prepared
         return imagedict
+
+    @torch.no_grad()
+    def _run_model(self, model, image):
+        if self.run_on_cuda:
+            model.cuda()
+        output = model(image)
+        activation = torch.sigmoid(output).item()
+        del output
+        torch.cuda.empty_cache()
+        estimate = THROMBUS_NO if activation <= 0.5 else THROMBUS_YES
+        if self.run_on_cuda:
+            # Bring it back
+            model.cpu()
+        return activation, estimate
 
     def do_classification(self, image_f, image_l, mf="", ml=""):
         t0 = time.time()
@@ -163,43 +181,27 @@ class Classificator:
         current_progress = 0
         if mf == "":
             for m_f in self.models_frontal:
-                output_frontal = m_f(images_frontal)
-                activation_f = torch.sigmoid(output_frontal).item()
-                del output_frontal
-                torch.cuda.empty_cache()
-                estimate_frontal = THROMBUS_NO if activation_f <= 0.5 else THROMBUS_YES
-                outputs_frontal.append(activation_f)
-                estimates_frontal.append(estimate_frontal)
+                act, est = self._run_model(m_f, images_frontal)
+                outputs_frontal.append(act)
+                estimates_frontal.append(est)
                 current_progress += 1
                 print(f"Progress: {current_progress}/{global_goal} ({current_progress * 100 / global_goal}%)")
         else:
-            output_frontal = self.models_frontal[mf](images_frontal)
-            activation_f = torch.sigmoid(output_frontal).item()
-            del output_frontal
-            torch.cuda.empty_cache()
-            estimate_frontal = THROMBUS_NO if activation_f <= 0.5 else THROMBUS_YES
-            outputs_frontal.append(activation_f)
-            estimates_frontal.append(estimate_frontal)
+            act, est = self._run_model(self.models_frontal[mf], images_frontal)
+            outputs_frontal.append(act)
+            estimates_frontal.append(est)
 
         if ml == "":
             for m_l in self.models_lateral:
-                output_lateral = m_l(images_lateral)
-                activation_l = torch.sigmoid(output_lateral).item()
-                del output_lateral
-                torch.cuda.empty_cache()
-                estimate_lateral = THROMBUS_NO if activation_l <= 0.5 else THROMBUS_YES
-                outputs_lateral.append(activation_l)
-                estimates_lateral.append(estimate_lateral)
+                act, est = self._run_model(m_l, images_lateral)
+                outputs_lateral.append(act)
+                estimates_lateral.append(est)
                 current_progress += 1
                 print(f"Progress: {current_progress}/{global_goal} ({current_progress * 100 / global_goal}%)")
         else:
-            output_lateral = self.models_lateral[ml](images_lateral)
-            activation_l = torch.sigmoid(output_lateral).item()
-            del output_lateral
-            torch.cuda.empty_cache()
-            estimate_lateral = THROMBUS_NO if activation_l <= 0.5 else THROMBUS_YES
-            outputs_lateral.append(activation_l)
-            estimates_lateral.append(estimate_lateral)
+            act, est = self._run_model(self.models_lateral[ml], images_lateral)
+            outputs_lateral.append(act)
+            estimates_lateral.append(est)
         t2 = time.time()
         del images_frontal
         del images_lateral
@@ -207,7 +209,7 @@ class Classificator:
         # TODO: Possible memory leak: remove images (maybe only when new ones are loaded?)
 
         print(
-            f"=== Timings: === \n Init model:{t1 - t0} ({(t1 - t0) * 100 / (t2 - t0)}%)\nClassification: {t2 - t1} ({(t2 - t1) * 100 / (t2 - t0)}%)")
+            f"=== Timings: === \nInit model:{t1 - t0} Seconds ({(t1 - t0) * 100 / (t2 - t0)}%)\nClassification: {t2 - t1} Seconds ({(t2 - t1) * 100 / (t2 - t0)}%)")
 
         return outputs_frontal, outputs_lateral, estimates_frontal, estimates_lateral
 
