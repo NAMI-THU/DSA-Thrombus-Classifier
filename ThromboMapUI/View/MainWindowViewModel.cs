@@ -27,6 +27,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private double _aiClassificationThreshold = 0.5;
     private RelayCommand<object>? _browseModelFolderCommand;
     private bool _classificationInProgress;
+    private bool _imagesLoaded;
     private double _classificationProgressPercentage;
     private SolidColorBrush _classificationResultColor = Brushes.White;
     private string _classificationResultFrontal = "/";
@@ -170,7 +171,18 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    public bool StartClassificationEnabled => ConversionFrontalDone && ConversionLateralDone && ModelsPrepared && !ClassificationInProgress;
+    public bool ImagesLoaded
+    {
+        get => _imagesLoaded;
+        private set
+        {
+            _imagesLoaded = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(StartClassificationEnabled));
+        }
+    }
+
+    public bool StartClassificationEnabled => ConversionFrontalDone && ConversionLateralDone && ModelsPrepared && !ClassificationInProgress && ImagesLoaded;
 
     private bool ModelsPrepared
     {
@@ -438,9 +450,11 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private async void UpdateImages()
     {
         if (!ConversionFrontalDone || !ConversionLateralDone) return;
+        ImagesLoaded = false;
         var imageResponse = await AiServiceCommunication.LoadImages(FileNameFrontal, FileNameLateral);
         ChangeFrontalNiftiImageCommand.Execute(imageResponse.img1);
         ChangeLateralNiftiImageCommand.Execute(imageResponse.img2);
+        ImagesLoaded = true;
     }
 
     private async void LoadInterpreter()
