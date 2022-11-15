@@ -75,6 +75,7 @@ class Classificator:
             # model_frontal = torch.nn.DataParallel(model_frontal)
             model_frontal.load_state_dict(checkpoint['model_state_dict'])
             model_frontal.to(device)
+            model_frontal.eval()
             self.models_frontal[m_f_orig] = model_frontal
 
         # Initialize model for lateral images:
@@ -89,6 +90,7 @@ class Classificator:
             # model_lateral = torch.nn.DataParallel(model_lateral)
             model_lateral.load_state_dict(checkpoint['model_state_dict'])
             model_lateral.to(device)
+            model_lateral.eval()
             self.models_lateral[m_l_orig] = model_lateral
 
         self.models_loaded = {'f': model_f, 'l': model_l}
