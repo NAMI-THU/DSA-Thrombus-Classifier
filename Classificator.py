@@ -28,6 +28,7 @@ class Classificator:
         self.models_lateral = {}
         self.preparedImages = {}
         self.run_on_cuda = False
+        self.device = torch.device("cpu")
 
         if torch.cuda.is_available():
             print("## CUDA is available. ##")
@@ -43,7 +44,9 @@ class Classificator:
         self.models_lateral = {}
         self.models_frontal = {}
 
+        # Uncomment this whole block if you prefer to use CPU
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        # Takes the last cuda device
         for d in range(torch.cuda.device_count()):
             device = torch.device(f"cuda:{d}")
             (free, total) = torch.cuda.mem_get_info(device)
@@ -56,7 +59,10 @@ class Classificator:
             else:
                 device = torch.device(f"cuda:{d}")
                 self.run_on_cuda = True
+        # Until here
 
+        self.device = device
+        torch.cuda.set_device(device)
         print(f"Running on {device}")
 
         # Load Checkpoints:
@@ -147,7 +153,7 @@ class Classificator:
     @torch.no_grad()
     def _run_model(self, model, image):
         if self.run_on_cuda:
-            model.cuda()
+            model.to(self.device)
         output = model(image)
         activation = torch.sigmoid(output).item()
         del output
@@ -214,9 +220,3 @@ class Classificator:
             f"=== Timings: === \nInit model:{t1 - t0} Seconds ({(t1 - t0) * 100 / (t2 - t0)}%)\nClassification: {t2 - t1} Seconds ({(t2 - t1) * 100 / (t2 - t0)}%)")
 
         return outputs_frontal, outputs_lateral, estimates_frontal, estimates_lateral
-
-
-if __name__ == "__main__":
-    c = Classificator()
-    c.load_models()
-    c.do_classification("images\\thrombYes\\263-01-aci-l-f.nii", "images\\thrombYes\\263-01-aci-l-s.nii")
