@@ -17,6 +17,7 @@ THROMBUS_NO = 0.214
 THROMBUS_YES = 0.786
 
 MINIMUM_FREE_GPU_VRAM_GB = 3.99
+CPU_ONLY = False
 
 
 class Classificator:
@@ -44,25 +45,27 @@ class Classificator:
         self.models_lateral = {}
         self.models_frontal = {}
 
-        # Uncomment this whole block if you prefer to use CPU
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        # Takes the last cuda device
-        for d in range(torch.cuda.device_count()):
-            device = torch.device(f"cuda:{d}")
-            (free, total) = torch.cuda.mem_get_info(device)
-            gb_total = total / 1073741824
-            gb_free = total / 1073741824
-            print(f"Device {device} has {gb_total} total RAM. Currently free: {gb_free}")
-            if gb_total < MINIMUM_FREE_GPU_VRAM_GB:
-                print(f"This is not enough, we need at least {MINIMUM_FREE_GPU_VRAM_GB} GB.")
-                device = torch.device("cpu")
-            else:
+        if CPU_ONLY:
+            device = torch.device("cpu")
+            self.run_on_cuda = False
+        else:
+            device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+            # Takes the last cuda device
+            for d in range(torch.cuda.device_count()):
                 device = torch.device(f"cuda:{d}")
-                self.run_on_cuda = True
-        # Until here
+                (free, total) = torch.cuda.mem_get_info(device)
+                gb_total = total / 1073741824
+                gb_free = total / 1073741824
+                print(f"Device {device} has {gb_total} total RAM. Currently free: {gb_free}")
+                if gb_total < MINIMUM_FREE_GPU_VRAM_GB:
+                    print(f"This is not enough, we need at least {MINIMUM_FREE_GPU_VRAM_GB} GB.")
+                    device = torch.device("cpu")
+                else:
+                    device = torch.device(f"cuda:{d}")
+                    torch.cuda.set_device(device)
+                    self.run_on_cuda = True
 
         self.device = device
-        torch.cuda.set_device(device)
         print(f"Running on {device}")
 
         # Load Checkpoints:
