@@ -15,7 +15,7 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
-        Title="Thrombomap" Height="1024" Width="1100">
+        Title="DSA Classificator" Height="1024" Width="1100">
     <Window.DataContext>
         <view:MainWindowViewModel />
     </Window.DataContext>
