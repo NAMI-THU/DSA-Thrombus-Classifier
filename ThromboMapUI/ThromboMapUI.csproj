@@ -2,10 +2,10 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net6.0-windows</TargetFramework>
+        <TargetFramework>net7.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
-        <LangVersion>10</LangVersion>
+        <LangVersion>default</LangVersion>
         <Authors>Technische Hochschule Ulm</Authors>
         <Description>A demonstrator for thrombusdetection on DSA sequences.</Description>
         <Company>Technische Hochschule Ulm</Company>
@@ -24,8 +24,8 @@
       <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
       <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
       <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-      <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.1" />
-      <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+      <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
+      <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
