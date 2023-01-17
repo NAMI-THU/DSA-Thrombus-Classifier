@@ -33,7 +33,7 @@ public static class DicomConverter
         var tmpFile = Path.GetTempFileName()+".nii";
         
         var result = await Cli.Wrap(_converterPath)
-                .WithArguments($"convert --input {inputPath} --output-img {tmpFile}")
+                .WithArguments($"convert --input \"{inputPath}\" --output-img {tmpFile}")
                 .WithValidation(CommandResultValidation.None)
                 .ExecuteAsync();
 
