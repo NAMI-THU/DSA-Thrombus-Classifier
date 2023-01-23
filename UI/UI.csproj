@@ -13,6 +13,7 @@
         <ApplicationIcon>Icon\ai.ico</ApplicationIcon>
         <AssemblyVersion>1.1.1</AssemblyVersion>
         <PackageVersion>1.1.1</PackageVersion>
+        <RootNamespace>UI</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -40,6 +41,9 @@
     <ItemGroup>
         <None Update="SimpleITKCSharpNative.dll">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="SimpleITKCSharpManaged.dll">
+          <CopyToOutputDirectory>Never</CopyToOutputDirectory>
         </None>
     </ItemGroup>
 </Project>

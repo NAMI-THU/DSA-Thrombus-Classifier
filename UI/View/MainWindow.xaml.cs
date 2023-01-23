@@ -1,7 +1,6 @@
 ﻿using System.Windows;
-using ThromboMapUI.View;
 
-namespace ThromboMapUI
+namespace UI.View
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

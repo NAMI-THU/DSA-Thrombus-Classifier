@@ -4,7 +4,7 @@ using Serilog;
 using Serilog.Formatting.Compact;
 using Services;
 
-namespace ThromboMapUI
+namespace UI
 {
     /// <summary>
     /// Interaction logic for App.xaml

@@ -5,6 +5,10 @@ riderModule.iml
 /_ReSharper.Caches/
 .idea/
 
+# You need to include these files by yourself
+UI/SimpleITKCSharpNative.dll
+UI/SimpleITKCSharpManaged.dll
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

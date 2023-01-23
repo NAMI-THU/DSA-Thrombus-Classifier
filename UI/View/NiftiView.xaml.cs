@@ -8,11 +8,11 @@ using System.Windows.Media;
 using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using Services.FileUtils;
-using ThromboMapUI.Util;
+using UI.Util;
 using Brush = System.Windows.Media.Brush;
 using Brushes = System.Windows.Media.Brushes;
 
-namespace ThromboMapUI.View;
+namespace UI.View;
 
 public partial class NiftiView : UserControl, INotifyPropertyChanged
 {

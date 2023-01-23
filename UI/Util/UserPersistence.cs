@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Configuration;
 
-namespace ThromboMapUI.Util;
+namespace UI.Util;
 
 public class UserPersistence : ApplicationSettingsBase
 {

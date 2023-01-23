@@ -9,10 +9,9 @@ using System.Windows.Media.Imaging;
 using itk.simple;
 using Color = System.Drawing.Color;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
-using SitkImage = itk.simple.Image;
 using PixelId = itk.simple.PixelIDValueEnum;
 
-namespace ThromboMapUI.Util;
+namespace UI.Util;
 
 /**
  * Some really black magic is happening here. We need this sorcery to correctly cast between multiple memory buffers and finally return a bitmap

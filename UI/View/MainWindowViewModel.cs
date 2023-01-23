@@ -14,9 +14,9 @@ using Services;
 using Services.AiService;
 using Services.AiService.Interpreter;
 using Services.AiService.Responses;
-using ThromboMapUI.Util;
+using UI.Util;
 
-namespace ThromboMapUI.View;
+namespace UI.View;
 
 public class MainWindowViewModel : INotifyPropertyChanged
 {

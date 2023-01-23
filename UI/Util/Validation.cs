@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 
-namespace ThromboMapUI.Util;
+namespace UI.Util;
 
 public static class Validation
 {

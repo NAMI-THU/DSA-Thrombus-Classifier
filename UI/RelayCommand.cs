@@ -1,7 +1,7 @@
-﻿namespace ThromboMapUI;
-
-using System;
+﻿using System;
 using System.Windows.Input;
+
+namespace UI;
 
 public class RelayCommand<T> : ICommand
 {
