@@ -1,0 +1,11 @@
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+.idea/
+ThromboMapUI.sln.DotSettings.user
+
+# You need to include this file by yourself
+ThromboMapUI/SimpleITKCSharpNative.dll
+ThromboMapUI/SimpleITKCSharpManaged.dll

@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net7.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <UseWPF>true</UseWPF>
+        <LangVersion>default</LangVersion>
+        <Authors>Technische Hochschule Ulm</Authors>
+        <Description>A demonstrator for thrombusdetection on DSA sequences.</Description>
+        <Company>Technische Hochschule Ulm</Company>
+        <Product>ThromboMap</Product>
+        <ApplicationIcon>Icon\ai.ico</ApplicationIcon>
+        <AssemblyVersion>1.1.1</AssemblyVersion>
+        <PackageVersion>1.1.1</PackageVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MaterialDesignThemes" Version="4.6.1" />
+      <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0" />
+      <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+      <PackageReference Include="Nifti.NET" Version="1.1.4" />
+      <PackageReference Include="Serilog" Version="2.12.0" />
+      <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
+      <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+      <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+      <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
+      <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Services\Services.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="SimpleITKCSharpManaged">
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="SimpleITKCSharpNative.dll">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+</Project>

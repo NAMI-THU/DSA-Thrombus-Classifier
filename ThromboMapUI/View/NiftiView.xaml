@@ -1,0 +1,61 @@
+﻿<UserControl x:Class="ThromboMapUI.View.NiftiView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.FontWeight="ExtraLight"
+             TextElement.FontSize="12"
+             TextOptions.TextFormattingMode="Ideal" 
+             TextOptions.TextRenderingMode="Auto"        
+             Background="{DynamicResource MaterialDesignPaper}"
+             FontFamily="{DynamicResource MaterialDesignFont}"
+             mc:Ignorable="d"
+             d:DesignHeight="200" d:DesignWidth="200"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <GroupBox
+        Style="{StaticResource MaterialDesignCardGroupBox}"
+        materialDesign:ColorZoneAssist.Mode="Custom"
+        materialDesign:ColorZoneAssist.Background="{Binding HeaderColor}"
+        materialDesign:ColorZoneAssist.Foreground="White">
+        <GroupBox.HeaderTemplate>
+            <DataTemplate>
+                <StackPanel
+                    Orientation="Horizontal">
+                    <materialDesign:PackIcon
+                        Kind="{Binding DataContext.HeaderIcon, RelativeSource={RelativeSource AncestorType=GroupBox}}"
+                        Height="32"
+                        Width="32"
+                        VerticalAlignment="Center"/>
+                    <TextBlock
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                        Text="{Binding DataContext.ImageName, RelativeSource={RelativeSource AncestorType=GroupBox}}" />
+                </StackPanel>
+            </DataTemplate>
+        </GroupBox.HeaderTemplate>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" Source="{Binding ImageDisplay}" MinHeight="100px" MinWidth="100px" MaxHeight="300px" MaxWidth="300px"></Image>
+                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Content="{Binding FileName}"/>  
+                <Button Grid.Row="2" Grid.Column="0" Margin="10" Command="{Binding BrowseCommand}">Browse</Button>
+                <Button Grid.Row="2" Grid.Column="1" Margin="10" 
+                        Command="{Binding ConvertCommand}"
+                        IsEnabled="{Binding ConvertEnabled}"
+                        Style="{StaticResource MaterialDesignRaisedLightButton}"
+                        materialDesign:ButtonProgressAssist.Value="-1"
+                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ConvertInProgress}"
+                        materialDesign:ButtonProgressAssist.IsIndeterminate="True">Convert</Button>
+            </Grid>
+        </GroupBox>
+</UserControl>
