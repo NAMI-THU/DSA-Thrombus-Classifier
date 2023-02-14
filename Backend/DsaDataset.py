@@ -22,7 +22,7 @@ class DsaDataset(torch.utils.data.Dataset):
         self.csvData = None  # is a multiindex dataframe containing all csv data
         self.imageNames = list()
         self.datasetDict = list()  # list with dictionary entries containing all information of dataset
-        self.currentIndex = -1  # Standard: -1, für Entwicklungszwecke > 0
+        self.currentIndex = -1  # default: -1, for development > 0
         self.files = os.listdir(self.dataPath)
         self.frontalAndLateralViewLastIndex = False
         self.training = training
@@ -41,19 +41,16 @@ class DsaDataset(torch.utils.data.Dataset):
         frontalAndLateralViewLastIndex = False
 
         while index < len(self.imageNames):
-            if frontalAndLateralViewLastIndex == True:
+            if frontalAndLateralViewLastIndex:
                 index += 2
             else:
                 index += 1
 
-            # Stellt sicher, dass keine out-of-index-error auftritt:
             if index >= len(self.imageNames):
                 break
 
-            # for index, filename in enumerate(files):
             filename = self.imageNames[index] + ".nii"
             positions = self.extractThrombusPositions(self.imageNames[index])
-            # print(positions)
 
             # image other view:
             # check, if other view exists:
@@ -69,10 +66,7 @@ class DsaDataset(torch.utils.data.Dataset):
 
             filename2 = self.imageNames[index + 1] + ".nii"
 
-            # print(filename + " | " + filename2)
-            # print(filename2[:7] in filename)
-
-            if (filename2[:7] in filename) == False:
+            if filename2[:7] not in filename:
                 # means: second image does not belong to the actual image series,
                 # as the files do not have the same filename starting with.
                 frontalAndLateralViewLastIndex = False
@@ -88,7 +82,6 @@ class DsaDataset(torch.utils.data.Dataset):
             #        append it to datasetDict.
             frontalAndLateralViewLastIndex = True
             positions2 = self.extractThrombusPositions(self.imageNames[index + 1])
-            # print(positions2)
 
             entry = {'filename': filename,
                      'keypoints': positions,
@@ -100,8 +93,6 @@ class DsaDataset(torch.utils.data.Dataset):
             else:
                 self.countThrombusyes += 1
 
-            # print(index)
-            # print(filename)
             self.datasetDict.append(entry)
 
         return
@@ -114,10 +105,9 @@ class DsaDataset(torch.utils.data.Dataset):
         image_data = nibabel.load(os.path.join(self.dataPath, entry['filename'])).get_fdata(caching='unchanged',
                                                                                             dtype=np.float32) * 0.062271062  # = 255/4095.0
         image_data = image_data.astype(np.uint8)
-        # print(image_data[400,600,10])
         image_data = ImageUtils.fillBlackBorderWithRandomNoise(image_data, 193)
 
-        if entry['frontalAndLateralView'] == False:
+        if not entry['frontalAndLateralView']:
             data = {'image': image_data,
                     'keypoints': entry['keypoints'],
                     'imageOtherView': None,
@@ -131,7 +121,6 @@ class DsaDataset(torch.utils.data.Dataset):
             image_data2 = nibabel.load(os.path.join(self.dataPath, entry['filenameOtherView'])).get_fdata(
                 caching='unchanged', dtype=np.float32) * 0.062271062
             image_data2 = image_data2.astype(np.uint8)
-            # print(image_data2[400,600,10])
             image_data2 = ImageUtils.fillBlackBorderWithRandomNoise(image_data2, 193)
 
             data = {'image': image_data,
@@ -151,8 +140,6 @@ class DsaDataset(torch.utils.data.Dataset):
             augmentation.createTransformTraining()
         else:
             augmentation.createTransformValidation()
-
-        # augmentation.createTransformValidation()
 
         augmentation.applyTransform()
 
@@ -189,12 +176,10 @@ class DsaDataset(torch.utils.data.Dataset):
                                   'y': np.int64},
                            usecols=['ImageName', 'PointNo', 'x', 'y'])[['ImageName', 'PointNo', 'x', 'y']]
 
-        # Mit Deklaration als multiframe erfolgt Zugriff auf einzelne rows immer
-        # mit einer Doppelangabe imagename + pointno
+        # Multiframe: Access to rows by imagename+pointno
         self.csvData = data.set_index(['ImageName', 'PointNo'])
         self.csvData.sort_index(inplace=True)
-        self.imageNames = self.csvData.index.levels[0]  # gibt die Dateinamen als Liste zurück
-        # print(self.imageNames)
+        self.imageNames = self.csvData.index.levels[0]  # filenames as list
 
     '''====================================================================='''
 
@@ -218,35 +203,3 @@ class DsaDataset(torch.utils.data.Dataset):
 
     def getNumberOfEntries(self):
         return len(self.imageNames)
-
-    '''=============Möglichkeiten Zugriff auf pandas Dataframe=============='''
-    # for name in self.imageNames:
-    #    print(name)
-    # print(self.csvData)
-    # print(self.csvData.index)
-    # print(len(self.csvData.loc['002-02-aci-r-f'])) # Ermittelt Anzahl der Thromben: 1 =
-    # print(self.csvData.loc[('001-01-aci-r-s', 0)]['x']) # Zugriff auf x-Koordinate
-
-    '''
-    # 1. Zugriffsmöglichkeit mit Zuweisung des ImageNames als Index:
-    self.csvData = data.set_index('ImageName')
-    selected = self.csvData.loc['001-01-aci-r-f']
-    print(selected)
-    print(selected.iloc[0])
-    print(selected.iloc[0]['x'])
-    print(selected.iloc[0]['y'])
-    print(selected.iloc[1]['x'])
-    print(selected.iloc[1]['y'])
-
-    # 2. Zugriffsmöglichkeit ohne Zuweisung des ImageNames als Index:
-    selected = self.csvData.loc[self.csvData['ImageName'] == '001-01-aci-r-s']
-    print(selected)
-    print(selected.iloc[0]) # liefert einzelne row/Serie zurück mit x,y-Werten
-    print(selected.iloc[1]) # liefert einzelne row/Serie zurück mit x,y-Werten
-    print(selected.iloc[0]['x']) # x-Koordinate des Thrombus
-    print(selected.iloc[0]['y'])
-    print(selected.iloc[1]['x'])
-    print(selected.iloc[1]['y'])
-    '''
-    # selected.shape returns (n_rows, n_columns)
-    # selected.empty returns True if DataFrame has no entry

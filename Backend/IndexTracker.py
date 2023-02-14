@@ -27,12 +27,11 @@ class IndexTracker(object):
         self.update()
 
     def update(self):
-        if self.inverted == False:
+        if not self.inverted:
             self.inverted = True
             self.axes.invert_yaxis()
 
         self.image.set_data(self.image_data[:, :, self.index])
-        # self.image.set_data(y,x)
         self.axes.set_ylabel('index = %s' % self.index)
         self.image.axes.figure.canvas.draw()
         for point in self.positions:

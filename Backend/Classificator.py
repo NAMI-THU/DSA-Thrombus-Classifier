@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import math
 import os
 import time
 
@@ -72,31 +71,20 @@ class Classificator:
         dir_list_f = os.listdir(model_f)
         dir_list_l = os.listdir(model_l)
 
-        # Initialize model for frontal images:
-        # model_frontal = models.resnet152()
-        # model_frontal.conv1 = torch.nn.Conv2d(62, 64, kernel_size=7, stride=2, padding=3, bias=False)
-        # model_frontal.fc = torch.nn.Linear(model_frontal.fc.in_features, 1)
-        # model_frontal = LSTMModel(1024*1024, 50, 2, 1, True)
         for m_f_orig in dir_list_f:
             m_f = os.path.join(model_f, m_f_orig)
             model_frontal = CnnLstmModel(512, 3, 1, True, device)
             checkpoint = torch.load(m_f, map_location=device)
-            # model_frontal = torch.nn.DataParallel(model_frontal)
             model_frontal.load_state_dict(checkpoint['model_state_dict'])
             model_frontal.to(device)
             model_frontal.eval()
             self.models_frontal[m_f_orig] = model_frontal
 
         # Initialize model for lateral images:
-        # model_lateral = models.resnet152()
-        # model_lateral.conv1 = torch.nn.Conv2d(62, 64, kernel_size=7, stride=2, padding=3, bias=False)
-        # model_lateral.fc = torch.nn.Linear(model_lateral.fc.in_features, 1)
-        # model_lateral = LSTMModel(1024*1024, 50, 2, 1, True)
         for m_l_orig in dir_list_l:
             m_l = os.path.join(model_l, m_l_orig)
             model_lateral = CnnLstmModel(512, 3, 1, True, device)
             checkpoint = torch.load(m_l, map_location=device)
-            # model_lateral = torch.nn.DataParallel(model_lateral)
             model_lateral.load_state_dict(checkpoint['model_state_dict'])
             model_lateral.to(device)
             model_lateral.eval()
@@ -110,6 +98,7 @@ class Classificator:
         return self.models_loaded['f'] == new_f and self.models_loaded['l'] == new_l
 
     def load_images(self, image_f, image_l, return_normalized=False):
+        t0 = time.time()
         image_data = nibabel.load(image_f).get_fdata(caching='unchanged',
                                                      dtype=np.float32) * 0.062271062  # = 255/4095.0
         image_data = image_data.astype(np.uint8)
@@ -146,6 +135,8 @@ class Classificator:
             img1, img2 = augmentation.getImageData()
 
         tens = augmentation.convertToTensor()
+        t1 = time.time()
+        print(f"=== Timings: === \nLoad & Preprocess images: {t1 - t0} Seconds")
         return tens, {'img1': img1, 'img2': img2}
 
     def prepare_images(self, image_frontal, image_lateral, normalized):
@@ -155,6 +146,7 @@ class Classificator:
 
     @torch.no_grad()
     def _run_model(self, model, image):
+        # Transfer the model to the GPU, when we do inference sequentially, we need less VRAM
         if self.run_on_cuda:
             model.to(self.device)
         output = model(image)
@@ -217,7 +209,8 @@ class Classificator:
         del images_frontal
         del images_lateral
 
-        # TODO: Possible memory leak: remove images (maybe only when new ones are loaded?)
+        # Possibly high memory consumption when many images are loaded subsequently.
+        # For production environment, we need to implement a max cache size
 
         print(
             f"=== Timings: === \nInit model:{t1 - t0} Seconds ({(t1 - t0) * 100 / (t2 - t0)}%)\nClassification: {t2 - t1} Seconds ({(t2 - t1) * 100 / (t2 - t0)}%)")

@@ -7,10 +7,10 @@ Created on Wed Dec 18 17:01:39 2019
 
 import cv2
 import torch
+from albumentations import RandomRotate90
 
 cv2.setNumThreads(0)
 cv2.ocl.setUseOpenCL(False)
-from albumentations import RandomRotate90
 
 """Convert ndarrays to Tensors"""
 
@@ -18,7 +18,7 @@ from albumentations import RandomRotate90
 class ToTensor(object):
 
     def __call__(self, image_as_np_ndarray):
-        # the axes has to be swapped as the convention is:
+        # the axes have to be swapped as the convention is:
         # numpy ndarray image: height x width x channels
         # torch image: channels X height X width
         image = image_as_np_ndarray.transpose(2, 0, 1)
@@ -31,7 +31,7 @@ class ToTensor(object):
 class ToNdarray(object):
 
     def __call__(self, image_as_tensor):
-        # the axes has to be swapped as the convention is:
+        # the axes have to be swapped as the convention is:
         # numpy ndarray image: height x width x channels
         # torch image: channels X height X width
         image = image_as_tensor.numpy()

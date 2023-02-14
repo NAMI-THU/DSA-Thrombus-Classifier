@@ -9,16 +9,14 @@ import cv2
 import numpy as np
 
 import CustomTransforms
-
-cv2.setNumThreads(0)
-cv2.ocl.setUseOpenCL(False)
-# we need the most current version of albumentations from git, otherwise it will not compile on newer python versions
-# pip install -U git+https://github.com/albumentations-team/albumentations
 import albumentations as albu
 import matplotlib.pyplot as plt
 import torch
 from IndexTracker import IndexTracker
 import copy
+
+cv2.setNumThreads(0)
+cv2.ocl.setUseOpenCL(False)
 
 '''Augments given data, which is stored in a dictionary'''
 
@@ -42,13 +40,11 @@ class DataAugmentation(object):
 
     '''====================================================================='''
 
-    # albu.Rotate(limit=30, p=0, interpolation=cv2.INTER_LINEAR, border_mode=cv2.BORDER_CONSTANT, value=(3100,3100,3100,3100)),
-    # IAAEmboss kommt visuell sehr nahe an Bildartefakten dran, erhöht aber Wertebereich > 1.0
     def createTransformTraining(self):
         if not self.data:
             return
 
-        if self.data['frontalAndLateralView'] == True:
+        if self.data['frontalAndLateralView']:
             self.transform = albu.Compose(
                 [
                     albu.VerticalFlip(p=0.5),
@@ -58,8 +54,8 @@ class DataAugmentation(object):
                                           rotate_limit=20,
                                           interpolation=cv2.INTER_LINEAR,
                                           border_mode=cv2.BORDER_CONSTANT,
-                                          value=(193, 193, 193, 193)),  # bisher: 0.757 bei float32
-                    CustomTransforms.Rotate90(p=1),  # immer p=1
+                                          value=(193, 193, 193, 193)),  # previously: 0.757 for float32
+                    CustomTransforms.Rotate90(p=1),  # always p=1
                     albu.Resize(512, 512, interpolation=cv2.INTER_LINEAR),
                     albu.RandomBrightnessContrast(p=0.2,
                                                   brightness_limit=0.2,
@@ -73,9 +69,8 @@ class DataAugmentation(object):
                                                      per_channel=True,
                                                      elementwise=True),
                             albu.Downscale(p=0.3, scale_min=0.5, scale_max=0.5)
-                            # decreases image quality bisher: p=0.8
-                        ], p=0.5)  # ,
-                    # albu.IAAPiecewiseAffine(p=0.5, scale=(0.02, 0.02)) #bisher: p=0.5, Rechenintensiv, aber Deformationen werden gut abgebildet
+                            # decreases image quality
+                        ], p=0.5)
                 ], p=1,
                 keypoint_params=albu.KeypointParams(format='yx'),
                 additional_targets={'imageOtherView': 'image',
@@ -91,8 +86,8 @@ class DataAugmentation(object):
                                           rotate_limit=20,
                                           interpolation=cv2.INTER_LINEAR,
                                           border_mode=cv2.BORDER_CONSTANT,
-                                          value=(193, 193, 193, 193)),  # bisher: 0.757 bei float32
-                    CustomTransforms.Rotate90(p=1),  # immer p=1
+                                          value=(193, 193, 193, 193)),
+                    CustomTransforms.Rotate90(p=1),
                     albu.Resize(512, 512, interpolation=cv2.INTER_LINEAR),
                     albu.RandomBrightnessContrast(p=0.2,
                                                   brightness_limit=0.2,
@@ -106,9 +101,7 @@ class DataAugmentation(object):
                                                      per_channel=True,
                                                      elementwise=True),
                             albu.Downscale(p=0.3, scale_min=0.5, scale_max=0.5)
-                            # decreases image quality bisher: p=0.8
-                        ], p=0.5)  # ,
-                    # albu.IAAPiecewiseAffine(p=0.5, scale=(0.02, 0.02)) #bisher: p=0.5, Rechenintensiv, aber Deformationen werden gut abgebildet
+                        ], p=0.5)
                 ], p=1,
                 keypoint_params=albu.KeypointParams(format='yx')
             )
@@ -119,15 +112,11 @@ class DataAugmentation(object):
         if not self.data:
             return
 
-        if self.data['frontalAndLateralView'] == True:
+        if self.data['frontalAndLateralView']:
             self.transform = albu.Compose(
                 [
                     CustomTransforms.Rotate90(p=1),
                     albu.Resize(512, 512, interpolation=cv2.INTER_LINEAR)
-                    # albu.RandomBrightnessContrast(p=0.6,
-                    #                              brightness_limit=0.2,
-                    #                              contrast_limit=0.2,
-                    #                              brightness_by_max=False)
                 ], p=1,
                 keypoint_params=albu.KeypointParams(format='yx'),
                 additional_targets={'imageOtherView': 'image',
@@ -138,10 +127,6 @@ class DataAugmentation(object):
                 [
                     CustomTransforms.Rotate90(p=1),
                     albu.Resize(512, 512, interpolation=cv2.INTER_LINEAR)
-                    # albu.RandomBrightnessContrast(p=0.6,
-                    #                              brightness_limit=0.2,
-                    #                              contrast_limit=0.2,
-                    #                              brightness_by_max=False)
                 ], p=1,
                 keypoint_params=albu.KeypointParams(format='yx')
             )
@@ -151,7 +136,7 @@ class DataAugmentation(object):
     # @jit
     def applyTransform(self):
         if not self.transform:
-            assert ("Transform not yet created. Cannot apply transform.")
+            assert "Transform not yet created. Cannot apply transform."
 
         keypoints = copy.deepcopy(self.data['keypoints'])
         keypointsOtherView = copy.deepcopy(self.data['keypointsOtherView'])
@@ -164,10 +149,8 @@ class DataAugmentation(object):
 
         if (keypoints == [(0, 0)]) or (keypoints == [(0, 1)]):
             self.data['keypoints'] = keypoints
-            # print("Undo keypoint transformation as it is special keypoint")
         if (keypointsOtherView == [(0, 0)]) or (keypointsOtherView == [(0, 1)]):
             self.data['keypointsOtherView'] = keypointsOtherView
-            # print("Undo keypoint transformation as it is special keypoint")
 
         return
 
@@ -208,20 +191,10 @@ class DataAugmentation(object):
                                performing zero padding")
 
         if self.data['image'] is not None:
-            # -x1, y1, z1 = self.data['image'].shape
-            # -slices_to_add1 = self.MAX_SERIES_LENGTH - z1
-            # -zeros1 = np.full((x1, y1, slices_to_add1), 193.0, dtype=np.float32)
             self.data['image'] = self.data['image'].astype(np.float32)
-            # self.data['image'] /= 255.0
-            # -self.data['image'] = np.append((self.data['image']), zeros1, axis=2)
 
         if self.data['imageOtherView'] is not None:
-            # -x2, y2, z2 = self.data['imageOtherView'].shape
-            # -slices_to_add2 = self.MAX_SERIES_LENGTH - z2
-            # -zeros2 = np.full((x2, y2, slices_to_add2), 193.0, dtype=np.float32)
             self.data['imageOtherView'] = self.data['imageOtherView'].astype(np.float32)
-            # self.data['imageOtherView'] /= 255.0
-            # -self.data['imageOtherView'] = np.append((self.data['imageOtherView']), zeros2, axis=2)
 
         if self.data['keypoints'] is not None:
             keypoints_to_add1 = self.MAX_KEYPOINT_LENGTH - len(self.data['keypoints'])
@@ -249,8 +222,6 @@ class DataAugmentation(object):
             self.data['imageOtherView'] -= np.mean(self.data['imageOtherView'], dtype=np.float32)
             self.data['imageOtherView'] /= np.std(self.data['imageOtherView'], dtype=np.float32)
 
-        # self.showAugmentedImages()
-
     '''====================================================================='''
 
     # @jit(nopython=True)
@@ -259,7 +230,6 @@ class DataAugmentation(object):
             raise RuntimeError("Data has to be transformed first before \
                                converting ToTensor")
 
-        # print(self.data['image'].dtype)
         transformToTensor = CustomTransforms.ToTensor()
 
         self.data['image'] = transformToTensor(self.data['image'])
@@ -275,7 +245,7 @@ class DataAugmentation(object):
 
     def showAugmentedImages(self):
 
-        if self.data['frontalAndLateralView'] == True:
+        if self.data['frontalAndLateralView']:
 
             fig1, ax1 = plt.subplots(1, 1)
             self.tracker1 = IndexTracker(ax1, self.data['image'], 'Image1', self.data['keypoints'])
@@ -296,4 +266,5 @@ class DataAugmentation(object):
 
     def getImageData(self):
         seq_length = self.data['image'].shape[2]
-        return np.copy(self.data['image'][:, :, int(seq_length / 2)]), np.copy(self.data['imageOtherView'][:, :, int(seq_length / 2)])
+        return np.copy(self.data['image'][:, :, int(seq_length / 2)]), np.copy(
+            self.data['imageOtherView'][:, :, int(seq_length / 2)])

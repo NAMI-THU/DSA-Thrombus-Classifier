@@ -46,7 +46,7 @@ def classification_requested():
 
 @app.route("/AiService/LoadImages", methods=["POST"])
 def load_images_requested():
-    print(f"Loading images requested...")
+    print(f"Loading of images requested...")
     content = request.get_json()
     image_f = content["PathFrontal"]
     image_l = content["PathLateral"]
