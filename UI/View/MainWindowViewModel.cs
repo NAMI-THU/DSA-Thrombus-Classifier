@@ -46,6 +46,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
     private RelayCommand<object>? _startClassificationCommand;
     private RelayCommand<object>? _windowLoadedCommand;
+    private RelayCommand<object>? _showAboutWindowCommand;
 
 
     public ICommand ChangeFrontalNiftiImageCommand { get; set; }
@@ -112,6 +113,17 @@ public class MainWindowViewModel : INotifyPropertyChanged
             {
                 LoadInterpreter();
                 RestoreUserSettings();
+            });
+        }
+    }
+
+    public ICommand ShowAboutWindowCommand
+    {
+        get
+        {
+            return _showAboutWindowCommand ??= new RelayCommand<object>(_ =>
+            {
+                ShowAboutWindow();
             });
         }
     }
@@ -470,5 +482,10 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             UpdateModelPath(path);
         }
+    }
+
+    private void ShowAboutWindow()
+    {
+        new AboutWindow().Show();
     }
 }

@@ -15,7 +15,7 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
-        Title="DSA Classificator" Width="1024">
+        Title="DSA Classificator" Width="1024" Height="856">
     <Window.DataContext>
         <view:MainWindowViewModel />
     </Window.DataContext>
@@ -26,9 +26,19 @@
     </b:Interaction.Triggers>
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <StackPanel Orientation="Vertical">
-            <TextBlock
-                Style="{StaticResource MaterialDesignHeadline2TextBlock}"
-                Text="DSA Classifier" Margin="10" HorizontalAlignment="Center" />
+            <DockPanel>
+                <Button DockPanel.Dock="Left"
+                    Style="{StaticResource MaterialDesignIconForegroundButton}"
+                    Command="{Binding ShowAboutWindowCommand}"
+                    ToolTip="About">
+                    <materialDesign:PackIcon
+                        Kind="Information"/>
+                </Button>
+                
+                <TextBlock
+                    Style="{StaticResource MaterialDesignHeadline2TextBlock}"
+                    Text="DSA Classifier" Margin="10" HorizontalAlignment="Center" />
+            </DockPanel>
             <materialDesign:Card
                 materialDesign:ElevationAssist.Elevation="Dp16" UniformCornerRadius="15"
                 Margin="10" Padding="5" >

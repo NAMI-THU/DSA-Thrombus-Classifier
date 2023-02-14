@@ -6,3 +6,5 @@ You need to include the SimpleITKNative.dll and SimpleITKManaged.dll in the Demo
 
 Important:
 When shipping a new version, make sure, that you do exclude the settings file! (Or tell the user how to migrate)
+
+Icon made by Freepik from www.flaticon.com
