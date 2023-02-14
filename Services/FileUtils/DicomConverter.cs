@@ -18,7 +18,11 @@ public static class DicomConverter
         // Check converter
         if (!File.Exists(_converterPath))
         {
-            var workingDirectory = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+            var workingDirectory = Path.GetDirectoryName(Environment.ProcessPath);
+            if (workingDirectory == null)
+            {
+                throw new ArgumentException("Unable to read Process Path. Please file a bug report on Github.");
+            }
             var file = Path.Combine(workingDirectory, "plastimatch", "plastimatch.exe");
             if (File.Exists(file))
             {
