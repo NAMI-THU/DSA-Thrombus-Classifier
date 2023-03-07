@@ -9,10 +9,10 @@
         <Authors>Technische Hochschule Ulm</Authors>
         <Description>A demonstrator for thrombusdetection on DSA sequences.</Description>
         <Company>Technische Hochschule Ulm</Company>
-        <Product>ThromboMap</Product>
+        <Product>DSA-Classificator</Product>
         <ApplicationIcon>Icon\ai.ico</ApplicationIcon>
-        <AssemblyVersion>1.1.1</AssemblyVersion>
-        <PackageVersion>1.1.1</PackageVersion>
+        <AssemblyVersion>1.2</AssemblyVersion>
+        <PackageVersion>1.2</PackageVersion>
         <RootNamespace>UI</RootNamespace>
     </PropertyGroup>
 
