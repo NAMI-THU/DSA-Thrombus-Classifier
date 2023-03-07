@@ -7,9 +7,10 @@ We describe this application in our paper [TODO].
 
 ## Getting started
 Before the first start, you need to setup the python service. For this, execute `Backend/setup.bat` . This might take a while.
+In the meanwhile, you can download the pretrained model from our project page in the [OpenScienceFramework](https://osf.io/n8k4r/). Make sure to keep the structure of the folder.
 
 To use the application, start the python backend using `Backend/RunServer.bat` . Afterwards, open the frontend application using `UI/Demonstrator.exe` .
-You first need to select the model you want to use. Once this is selected, the application will remember this at every start until you change it again. Afterwards, you are ready to go. For this, select the frontal and lateral image respectively. We support nifti as well as DICOM, however, for the ladder, you first need to convert the file using the conversion-button. Once both files are selected, the application displays a mid-sequence preview. You are then ready to run the classification using the respective robot-button. 
+You first need to select the model you want to use. For this, select the directory of your models, in which the two subdirectories, frontal and lateral, are contained. Once this is selected, the application will remember this at every start until you change it again. Afterwards, you are ready to go. For this, select the frontal and lateral image respectively. We support nifti as well as DICOM, however, for the ladder, you first need to convert the file using the conversion-button. Once both files are selected, the application displays a mid-sequence preview. You are then ready to run the classification using the respective robot-button. 
 
 You might want to change the threshold that is used to determine whether a classification counts as thrombus-free or non-thrombus-free. By default, we recommend using a threshold of `0.57`, which is done by optimizing a trade-off between the different metrics. 
 
