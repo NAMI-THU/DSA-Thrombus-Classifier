@@ -1,0 +1,23 @@
+This application uses the following 3rd party libraries.
+The license file can be accessed by the respective URL.
+
+Cli Wrap. Oleksii Holub. MIT. https://github.com/Tyrrrz/CliWrap/blob/master/License.txt
+MaterialDesign. James Willock. MIT. https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/blob/master/LICENSE
+Microsoft.Xaml.Behaviors.WPF. Microsoft. MIT. https://licenses.nuget.org/MIT
+Nifti.NET. Patrick Prendergast. MIT. https://github.com/plwp/Nifti.NET/blob/master/LICENSE
+Serilog. Serilog Contributors. Apache V2. https://github.com/serilog/serilog/blob/dev/LICENSE
+Newtonsoft.Json. James Newton-King. MIT. https://github.com/JamesNK/Newtonsoft.Json/blob/master/LICENSE.md
+
+Flask. Pallets. BSD. https://github.com/pallets/flask/blob/main/LICENSE.rst
+Pytorch. Pytorch developers. BSD. https://github.com/pytorch/pytorch/blob/master/LICENSE
+numpy. NumPy developers. BSD. https://github.com/numpy/numpy/blob/main/LICENSE.txt
+matplotlib. matplotlib developers. Matplotlib License. https://github.com/matplotlib/matplotlib/blob/main/LICENSE/LICENSE
+nibabel. Nibabel developers. MIT. https://github.com/nipy/nibabel/blob/master/COPYING
+opencv-python. Olli-Pekka Heinisuo. MIT. https://github.com/opencv/opencv-python/blob/4.x/LICENSE.txt
+pandas. Pandas developers. BSD. https://github.com/pandas-dev/pandas/blob/main/LICENSE
+Pillow. Pillow developers. HPND. https://github.com/python-pillow/Pillow/blob/main/LICENSE
+scipy. SciPy developers. BSD. https://github.com/scipy/scipy/blob/main/LICENSE.txt
+scikit-image. scikit-image developers. BSD. https://github.com/scikit-image/scikit-image/blob/main/LICENSE.txt
+albumentations. albumentations developers. MIT. https://github.com/albumentations-team/albumentations/blob/master/LICENSE
+scikit-learn. scikit-learn developers. BSD. https://github.com/scikit-learn/scikit-learn/blob/main/COPYING
+timm. huggingface. ApacheV2. https://github.com/huggingface/pytorch-image-models/blob/main/LICENSE

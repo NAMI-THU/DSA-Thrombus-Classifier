@@ -19,7 +19,6 @@
     <Window.DataContext>
         <local:AboutWindowViewModel />
     </Window.DataContext>
-    <Grid>
         <StackPanel Orientation="Vertical">
             <TextBlock
                 Style="{StaticResource MaterialDesignHeadline4TextBlock}"
@@ -28,40 +27,40 @@
                 Style="{StaticResource MaterialDesignTextBlock}"
                 Text="Icon made by Freepik from www.flaticon.com" Margin="10" HorizontalAlignment="Center" />
             <ListView
-                x:Name="rootList"
-                ItemsSource="{Binding AttributionListUI}">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn
-                            DisplayMemberBinding="{Binding Library}"
-                            Header="Library" />
-                        <GridViewColumn
-                            DisplayMemberBinding="{Binding Author}"
-                            Header="Author" />
-                        <GridViewColumn
-                            Header="License">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Label Content="{Binding License.Name}"></Label>
-                                        <Button
-                                            Width="16"
-                                            Height="16"
-                                            Style="{StaticResource MaterialDesignIconButton}"
-                                            Command="{Binding ElementName=rootList, Path=DataContext.OpenUrlCommand}"
-                                            CommandParameter="{Binding License.Url}">
-                                            <materialDesign:PackIcon
-                                                Kind="OpenInNew"
+                    x:Name="rootList"
+                    MaxHeight="500"
+                    ItemsSource="{Binding AttributionListUI}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn
+                                DisplayMemberBinding="{Binding Library}"
+                                Header="Library" />
+                            <GridViewColumn
+                                DisplayMemberBinding="{Binding Author}"
+                                Header="Author" />
+                            <GridViewColumn
+                                Header="License">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label Content="{Binding License.Name}"></Label>
+                                            <Button
+                                                Width="16"
                                                 Height="16"
-                                                Width="16" />
-                                        </Button>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
+                                                Style="{StaticResource MaterialDesignIconButton}"
+                                                Command="{Binding ElementName=rootList, Path=DataContext.OpenUrlCommand}"
+                                                CommandParameter="{Binding License.Url}">
+                                                <materialDesign:PackIcon
+                                                    Kind="OpenInNew"
+                                                    Height="16"
+                                                    Width="16" />
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
         </StackPanel>
-    </Grid>
 </Window>
