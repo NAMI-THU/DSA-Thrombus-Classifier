@@ -93,7 +93,8 @@ all operations completed successfully, you are ready to go.
 ### Selection of the model
 
 To use the application, you first need to start the backend service and
-afterwards launch the graphical user interface. For this:
+afterwards launch the graphical user interface. For this simply run the `StartApplication.bat` in the root directory.
+Alternatively, follow the following steps:
 
 1.  Navigate into the `Python-Server` directory
 
