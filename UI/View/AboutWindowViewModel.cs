@@ -35,6 +35,9 @@ public class AboutWindowViewModel : INotifyPropertyChanged
 
     private void LoadData()
     {
+        AttributionListUI.Add(new Attribution("SimpleITK",new License("Apache V2","https://github.com/SimpleITK/SimpleITK/blob/master/LICENSE"), "NumFOCUS"));
+        AttributionListUI.Add(new Attribution("plastimatch",new License("Plastimatch Software License","https://gitlab.com/plastimatch/plastimatch/-/blob/master/src/LICENSE.TXT"), "The General Hospital Corporation Inc."));
+        
         AttributionListUI.Add(new Attribution("Cli Wrap",new License("MIT","https://github.com/Tyrrrz/CliWrap/blob/master/License.txt"), "Oleksii Holub"));
         AttributionListUI.Add(new Attribution("MaterialDesign",new License("MIT","https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/blob/master/LICENSE"),"James Willock"));
         AttributionListUI.Add(new Attribution("Microsoft.Xaml.Behaviors.WPF",new License("MIT","https://licenses.nuget.org/MIT"),"Microsoft"));

@@ -15,7 +15,7 @@
         mc:Ignorable="d"
         Title="About"
         WindowStartupLocation="CenterScreen"
-        Width="512">
+        Width="670">
     <Window.DataContext>
         <local:AboutWindowViewModel />
     </Window.DataContext>

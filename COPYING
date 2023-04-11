@@ -1,5 +1,8 @@
 This application uses the following 3rd party libraries.
-The license file can be accessed by the respective URL.
+The respective license files can be accessed by the respective URL.
+
+SimpleITK. NumFOCUS. ApacheV2. https://github.com/SimpleITK/SimpleITK/blob/master/LICENSE
+Plastimatch. The General Hospital Corporation Inc. Plastimatch Software License. https://gitlab.com/plastimatch/plastimatch/-/blob/master/src/LICENSE.TXT
 
 Cli Wrap. Oleksii Holub. MIT. https://github.com/Tyrrrz/CliWrap/blob/master/License.txt
 MaterialDesign. James Willock. MIT. https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit/blob/master/LICENSE
