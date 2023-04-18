@@ -7,8 +7,8 @@
              TextElement.Foreground="{DynamicResource MaterialDesignBody}"
              TextElement.FontWeight="ExtraLight"
              TextElement.FontSize="12"
-             TextOptions.TextFormattingMode="Ideal" 
-             TextOptions.TextRenderingMode="Auto"        
+             TextOptions.TextFormattingMode="Ideal"
+             TextOptions.TextRenderingMode="Auto"
              Background="{DynamicResource MaterialDesignPaper}"
              FontFamily="{DynamicResource MaterialDesignFont}"
              mc:Ignorable="d"
@@ -27,7 +27,7 @@
                         Kind="{Binding DataContext.HeaderIcon, RelativeSource={RelativeSource AncestorType=GroupBox}}"
                         Height="32"
                         Width="32"
-                        VerticalAlignment="Center"/>
+                        VerticalAlignment="Center" />
                     <TextBlock
                         Margin="8,0,0,0"
                         VerticalAlignment="Center"
@@ -36,26 +36,32 @@
                 </StackPanel>
             </DataTemplate>
         </GroupBox.HeaderTemplate>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" RenderOptions.BitmapScalingMode="NearestNeighbor" RenderOptions.EdgeMode="Aliased" Source="{Binding ImageDisplay}" MinHeight="100px" MinWidth="100px" MaxHeight="300px" MaxWidth="300px"></Image>
-                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Content="{Binding FileName}"/>  
-                <Button Grid.Row="2" Grid.Column="0" Margin="10" Command="{Binding BrowseCommand}">Browse</Button>
-                <Button Grid.Row="2" Grid.Column="1" Margin="10" 
-                        Command="{Binding ConvertCommand}"
-                        IsEnabled="{Binding ConvertEnabled}"
-                        Style="{StaticResource MaterialDesignRaisedLightButton}"
-                        materialDesign:ButtonProgressAssist.Value="-1"
-                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ConvertInProgress}"
-                        materialDesign:ButtonProgressAssist.IsIndeterminate="True">Convert</Button>
-            </Grid>
-        </GroupBox>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" RenderOptions.BitmapScalingMode="NearestNeighbor"
+                   RenderOptions.EdgeMode="Aliased" Source="{Binding ImageDisplay}" MinHeight="100px" MinWidth="100px"
+                   MaxHeight="300px" MaxWidth="300px">
+            </Image>
+            <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center"
+                   Content="{Binding FileName}" />
+            <Button Grid.Row="2" Grid.Column="0" Margin="10" Command="{Binding BrowseCommand}">Browse</Button>
+            <Button Grid.Row="2" Grid.Column="1" Margin="10"
+                    Command="{Binding ConvertCommand}"
+                    IsEnabled="{Binding ConvertEnabled}"
+                    Style="{StaticResource MaterialDesignRaisedLightButton}"
+                    materialDesign:ButtonProgressAssist.Value="-1"
+                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding ConvertInProgress}"
+                    materialDesign:ButtonProgressAssist.IsIndeterminate="True">
+                Convert
+            </Button>
+        </Grid>
+    </GroupBox>
 </UserControl>

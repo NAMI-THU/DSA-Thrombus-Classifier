@@ -24,47 +24,45 @@ public static class ImageUtil
 
     public static async Task<ImageSource> LoadNiftiToImage(string path)
     {
-        var result = await Task.Run(() =>
-        {
+        var result = await Task.Run(() => {
             var input = SimpleITK.ReadImage(path);
             input = SimpleITK.Cast(input, PixelId.sitkUInt8);
 
             var buffer = input.GetBufferAsUInt8();
-            
-            var newBitmap = new Bitmap((int)input.GetWidth(), (int)input.GetHeight(), (int)input.GetWidth(), PixelFormat.Format8bppIndexed, buffer);
+
+            var newBitmap = new Bitmap((int)input.GetWidth(), (int)input.GetHeight(), (int)input.GetWidth(),
+                PixelFormat.Format8bppIndexed, buffer);
             var pal = newBitmap.Palette;
-            for (var i = 0; i <= 255; i++)
-            {
+            for (var i = 0; i <= 255; i++) {
                 // create greyscale color table
                 pal.Entries[i] = Color.FromArgb(i, i, i);
             }
+
             newBitmap.Palette = pal; // you need to re-set this property to force the new ColorPalette
-            
+
             var handle = newBitmap.GetHbitmap();
-            try
-            {
-                var img = Imaging.CreateBitmapSourceFromHBitmap(handle, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            try {
+                var img = Imaging.CreateBitmapSourceFromHBitmap(handle, IntPtr.Zero, Int32Rect.Empty,
+                    BitmapSizeOptions.FromEmptyOptions());
                 img.Freeze();
                 return img;
             } // We need to this manually to avoid a memory leak
-            finally { DeleteObject(handle); }  
-
+            finally {
+                DeleteObject(handle);
+            }
         });
         return result;
     }
 
     public static async Task<ImageSource> Array2Image(float[][] image)
     {
-        var result = await Task.Run(() =>
-        {
+        var result = await Task.Run(() => {
             var width = image.Length;
             var height = image[0].Length;
             var newBitmap = new Bitmap(width, height);
 
-            for (var j = 0; j < width; j++)
-            {
-                for (var i = 0; i < height; i++)
-                {
+            for (var j = 0; j < width; j++) {
+                for (var i = 0; i < height; i++) {
                     var c = (int)image[i][j];
                     var color = Color.FromArgb(c, c, c);
                     newBitmap.SetPixel(j, height - i - 1, color);
@@ -72,15 +70,13 @@ public static class ImageUtil
             }
 
             var handle = newBitmap.GetHbitmap();
-            try
-            {
+            try {
                 var img = Imaging.CreateBitmapSourceFromHBitmap(handle, IntPtr.Zero, Int32Rect.Empty,
                     BitmapSizeOptions.FromEmptyOptions());
                 img.Freeze();
                 return img;
             } // We need to this manually to avoid a memory leak
-            finally
-            {
+            finally {
                 DeleteObject(handle);
             }
         });

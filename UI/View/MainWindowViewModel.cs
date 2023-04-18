@@ -21,7 +21,7 @@ namespace UI.View;
 public class MainWindowViewModel : INotifyPropertyChanged
 {
     private readonly ResultInterpreter _resultInterpreter = new();
-    
+
     private bool _aiClassificationDone;
     private double _aiClassificationOutcomeCombined;
     private double _aiClassificationThreshold = 0.5;
@@ -40,7 +40,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private RelayCommand<string>? _frontalPreparedNotification;
     private RelayCommand<string>? _lateralPreparedNotification;
     private string? _modelSelectionFolder;
-    private PackIcon _modelSelectionFolderBadge = new(){Kind = PackIconKind.Alert};
+    private PackIcon _modelSelectionFolderBadge = new() { Kind = PackIconKind.Alert };
     private PackIconKind _classificationResultIcon = PackIconKind.QuestionMark;
     private bool _modelsPrepared;
 
@@ -51,47 +51,34 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
     public ICommand ChangeFrontalNiftiImageCommand { get; set; }
     public ICommand ChangeLateralNiftiImageCommand { get; set; }
-    
-    public ICommand BrowseModelFolderCommand{
-        get
-        {
-            return _browseModelFolderCommand ??= new RelayCommand<object>(_ => OnBrowseModelFolderClicked());
-        }
+
+    public ICommand BrowseModelFolderCommand {
+        get { return _browseModelFolderCommand ??= new RelayCommand<object>(_ => OnBrowseModelFolderClicked()); }
     }
 
-    public ICommand FrontalPreparedNotification
-    {
-        get
-        {
-            return _frontalPreparedNotification ??= new RelayCommand<string>(s =>
-            {
-                if (!string.IsNullOrEmpty(s))
-                {
+    public ICommand FrontalPreparedNotification {
+        get {
+            return _frontalPreparedNotification ??= new RelayCommand<string>(s => {
+                if (!string.IsNullOrEmpty(s)) {
                     FileNameFrontal = s;
                     ConversionFrontalDone = true;
                 }
-                else
-                {
+                else {
                     FileNameFrontal = "";
-                    ConversionFrontalDone = false;  // Reset
+                    ConversionFrontalDone = false; // Reset
                 }
             });
         }
     }
-    
-    public ICommand LateralPreparedNotification
-    {
-        get
-        {
-            return _lateralPreparedNotification ??= new RelayCommand<string>(s =>
-            {
-                if (!string.IsNullOrEmpty(s))
-                {
+
+    public ICommand LateralPreparedNotification {
+        get {
+            return _lateralPreparedNotification ??= new RelayCommand<string>(s => {
+                if (!string.IsNullOrEmpty(s)) {
                     FileNameLateral = s;
                     ConversionLateralDone = true;
                 }
-                else
-                {
+                else {
                     FileNameLateral = "";
                     ConversionLateralDone = false;
                 }
@@ -99,40 +86,26 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    public ICommand StartClassificationCommand { 
-        get {
-            return _startClassificationCommand ??= new RelayCommand<object>(_ => StartClassificationOnClick());
-        } 
+    public ICommand StartClassificationCommand {
+        get { return _startClassificationCommand ??= new RelayCommand<object>(_ => StartClassificationOnClick()); }
     }
 
-    public ICommand WindowLoadedCommand
-    {
-        get
-        {
-            return _windowLoadedCommand ??= new RelayCommand<object>(_ =>
-            {
+    public ICommand WindowLoadedCommand {
+        get {
+            return _windowLoadedCommand ??= new RelayCommand<object>(_ => {
                 LoadInterpreter();
                 RestoreUserSettings();
             });
         }
     }
 
-    public ICommand ShowAboutWindowCommand
-    {
-        get
-        {
-            return _showAboutWindowCommand ??= new RelayCommand<object>(_ =>
-            {
-                ShowAboutWindow();
-            });
-        }
+    public ICommand ShowAboutWindowCommand {
+        get { return _showAboutWindowCommand ??= new RelayCommand<object>(_ => { ShowAboutWindow(); }); }
     }
 
-    private bool ConversionFrontalDone
-    {
+    private bool ConversionFrontalDone {
         get => _conversionFrontalDone;
-        set
-        {
+        set {
             _conversionFrontalDone = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(StartClassificationEnabled));
@@ -140,11 +113,9 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    private bool ConversionLateralDone
-    {
+    private bool ConversionLateralDone {
         get => _conversionLateralDone;
-        set
-        {
+        set {
             _conversionLateralDone = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(StartClassificationEnabled));
@@ -152,87 +123,73 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    private string? FileNameFrontal
-    {
+    private string? FileNameFrontal {
         get => _fileNameFrontal;
-        set
-        {
+        set {
             _fileNameFrontal = value;
             OnPropertyChanged();
         }
     }
 
-    private string? FileNameLateral
-    {
+    private string? FileNameLateral {
         get => _fileNameLateral;
-        set
-        {
+        set {
             _fileNameLateral = value;
             OnPropertyChanged();
         }
     }
 
-    public bool ClassificationInProgress
-    {
+    public bool ClassificationInProgress {
         get => _classificationInProgress;
-        private set
-        {
+        private set {
             _classificationInProgress = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(StartClassificationEnabled));
         }
     }
 
-    public bool ImagesLoaded
-    {
+    public bool ImagesLoaded {
         get => _imagesLoaded;
-        private set
-        {
+        private set {
             _imagesLoaded = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(StartClassificationEnabled));
         }
     }
 
-    public bool StartClassificationEnabled => ConversionFrontalDone && ConversionLateralDone && ModelsPrepared && !ClassificationInProgress && ImagesLoaded;
+    public bool StartClassificationEnabled => ConversionFrontalDone && ConversionLateralDone && ModelsPrepared &&
+                                              !ClassificationInProgress && ImagesLoaded;
 
-    private bool ModelsPrepared
-    {
+    private bool ModelsPrepared {
         get => _modelsPrepared;
-        set
-        {
+        set {
             _modelsPrepared = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(StartClassificationEnabled));
         }
     }
-    public bool AiClassificationDone
-    {
+
+    public bool AiClassificationDone {
         get => _aiClassificationDone;
-        set
-        {
+        set {
             _aiClassificationDone = value;
             OnPropertyChanged();
         }
     }
 
-    public double AiClassificationOutcomeCombined
-    {
+    public double AiClassificationOutcomeCombined {
         get => _aiClassificationOutcomeCombined;
-        set
-        {
+        set {
             _aiClassificationOutcomeCombined = value;
-            
+
             OnPropertyChanged();
             UpdateClassificationText();
         }
     }
 
-    public double AiClassificationThreshold
-    {
+    public double AiClassificationThreshold {
         get => _aiClassificationThreshold;
-        set
-        {
+        set {
             if (value.Equals(_aiClassificationThreshold)) return;
             value = Math.Round(value, 2);
             _aiClassificationThreshold = value;
@@ -242,13 +199,13 @@ public class MainWindowViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(Threshold_FP));
             OnPropertyChanged(nameof(Threshold_FN));
             OnPropertyChanged(nameof(Threshold_TN));
-            
+
             OnPropertyChanged(nameof(Accuracy));
             OnPropertyChanged(nameof(F1Score));
             OnPropertyChanged(nameof(Precision));
             OnPropertyChanged(nameof(Recall));
             OnPropertyChanged(nameof(MCC));
-            
+
             UpdateClassificationText();
         }
     }
@@ -264,81 +221,65 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public string Recall => _resultInterpreter.RecallString;
     public string MCC => _resultInterpreter.MCCString;
 
-    public PackIcon ModelSelectionFolderBadge
-    {
+    public PackIcon ModelSelectionFolderBadge {
         get => _modelSelectionFolderBadge;
-        set
-        {
+        set {
             _modelSelectionFolderBadge = value;
             OnPropertyChanged();
         }
     }
 
-    public string ClassificationResultText
-    {
+    public string ClassificationResultText {
         get => _classificationResultText;
-        private set
-        {
+        private set {
             _classificationResultText = value;
             OnPropertyChanged();
         }
     }
 
-    public SolidColorBrush ClassificationResultColor
-    {
+    public SolidColorBrush ClassificationResultColor {
         get => _classificationResultColor;
-        private set
-        {
+        private set {
             _classificationResultColor = value;
             OnPropertyChanged();
         }
     }
 
-    public PackIconKind ClassificationResultIcon
-    {
+    public PackIconKind ClassificationResultIcon {
         get => _classificationResultIcon;
-        private set
-        {
+        private set {
             _classificationResultIcon = value;
             OnPropertyChanged();
         }
     }
 
-    public double ClassificationProgressPercentage
-    {
+    public double ClassificationProgressPercentage {
         get => _classificationProgressPercentage;
-        set
-        {
+        set {
             _classificationProgressPercentage = value;
             OnPropertyChanged();
         }
     }
 
-    public string ClassificationResultFrontal
-    {
+    public string ClassificationResultFrontal {
         get => _classificationResultFrontal;
-        private set
-        {
+        private set {
             _classificationResultFrontal = value;
             OnPropertyChanged();
         }
     }
 
-    public string ClassificationResultLateral
-    {
+    public string ClassificationResultLateral {
         get => _classificationResultLateral;
-        private set
-        {
+        private set {
             _classificationResultLateral = value;
             OnPropertyChanged();
         }
     }
 
-    public string? ModelSelectionFolder
-    {
+    public string? ModelSelectionFolder {
         get => _modelSelectionFolder;
-        private set
-        {
+        private set {
             _modelSelectionFolder = value;
             OnPropertyChanged();
         }
@@ -346,20 +287,19 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     private void UpdateClassificationText()
     {
-        if (_resultInterpreter.HasThrombus(AiClassificationOutcomeCombined))
-        {
+        if (_resultInterpreter.HasThrombus(AiClassificationOutcomeCombined)) {
             ClassificationResultText = "Thrombus detected!";
             ClassificationResultColor = Brushes.OrangeRed;
             ClassificationResultIcon = PackIconKind.AlertCircle;
         }
-        else
-        {
+        else {
             ClassificationResultText = "No Thrombus detected.";
             ClassificationResultColor = Brushes.SpringGreen;
             ClassificationResultIcon = PackIconKind.CheckCircle;
@@ -368,16 +308,15 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
     private void OnBrowseModelFolderClicked()
     {
-        var dialog = new CommonOpenFileDialog
-        {
+        var dialog = new CommonOpenFileDialog {
             IsFolderPicker = true
         };
-        if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-        {
+        if (dialog.ShowDialog() == CommonFileDialogResult.Ok) {
             var success = UpdateModelPath(dialog.FileName);
-            if(!success)
-            {
-                MessageBox.Show("The structure of the selected directory is invalid. Ensure that the selected folder has a frontal and lateral subdirectory, in which the respective model (or multiple model-folds) is. Additionally, make sure that the filenames of both versions are identical (that means, corresponding model names should have the same name, e.g. frontal/fold1.pt and lateral/fold1.pt or frontal/model.pt and lateral/model.pt", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            if (!success) {
+                MessageBox.Show(
+                    "The structure of the selected directory is invalid. Ensure that the selected folder has a frontal and lateral subdirectory, in which the respective model (or multiple model-folds) is. Additionally, make sure that the filenames of both versions are identical (that means, corresponding model names should have the same name, e.g. frontal/fold1.pt and lateral/fold1.pt or frontal/model.pt and lateral/model.pt",
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
@@ -385,8 +324,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private bool UpdateModelPath(string path)
     {
         var structureOkay = Validation.CheckModelFolderStructure(path);
-        if (structureOkay)
-        {
+        if (structureOkay) {
             ModelSelectionFolder = path;
             ModelSelectionFolderBadge = new PackIcon { Kind = PackIconKind.Sync };
             PreloadModels();
@@ -404,18 +342,18 @@ public class MainWindowViewModel : INotifyPropertyChanged
         var responses = new List<ClassificationResponse>();
         var folderFrontal = Path.Join(ModelSelectionFolder, "frontal");
         var models = Directory.GetFiles(folderFrontal);
-        foreach(var model in models)
-        {
+        foreach (var model in models) {
             var modelName = Path.GetFileName(model);
             double currentCount = 0;
             var total = models.Length;
             ClassificationProgressPercentage = -1;
-            var response = await AiServiceCommunication.ClassifySequence(modelName, modelName, FileNameFrontal, FileNameLateral);
+            var response =
+                await AiServiceCommunication.ClassifySequence(modelName, modelName, FileNameFrontal, FileNameLateral);
             responses.Add(response);
             currentCount++;
             ClassificationProgressPercentage = currentCount / total;
         }
-        
+
         ClassificationInProgress = false;
         AiClassificationDone = true;
         var averages = ResultInterpreter.CalculateCombinedResult(responses);
@@ -423,37 +361,39 @@ public class MainWindowViewModel : INotifyPropertyChanged
         ClassificationResultFrontal = $"{averages.Item2:F2}";
         ClassificationResultLateral = $"{averages.Item3:F2}";
 
-        if (Configuration.EnableEvaluationSetup)
-        {
-            var result = MessageBox.Show("Was there a thrombus in this sequence? \n(You can disable this evaluation mode in appsettings.json)","Service evaluation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+        if (Configuration.EnableEvaluationSetup) {
+            var result =
+                MessageBox.Show(
+                    "Was there a thrombus in this sequence? \n(You can disable this evaluation mode in appsettings.json)",
+                    "Service evaluation", MessageBoxButton.YesNo, MessageBoxImage.Question);
             var truth = result == MessageBoxResult.Yes ? 1 : 0;
-            Log.Information("Classification evaluated: {@OutputFrontal}, {@OutputLateral}, {@Truth}. {@ModelPath} with {@ImageFrontal} and {@ImageLateral}", averages.Item2, averages.Item3, truth, ModelSelectionFolder, FileNameFrontal, FileNameLateral);
+            Log.Information(
+                "Classification evaluated: {@OutputFrontal}, {@OutputLateral}, {@Truth}. {@ModelPath} with {@ImageFrontal} and {@ImageLateral}",
+                averages.Item2, averages.Item3, truth, ModelSelectionFolder, FileNameFrontal, FileNameLateral);
         }
     }
 
     private async void PreloadModels()
     {
         if (ModelSelectionFolder == null) return;
-        
+
         ModelsPrepared = false;
         ClassificationInProgress = true;
         ClassificationResultText = "Initializing models...";
-        try
-        {
+        try {
             await AiServiceCommunication.PreloadModels(ModelSelectionFolder);
             ModelSelectionFolderBadge = new PackIcon { Kind = PackIconKind.Check };
             ClassificationResultText = "Not run yet";
             ModelsPrepared = true;
         }
-        catch (HttpRequestException)
-        {
-            MessageBox.Show("Server is unavailable. Please make sure it is running and select the folder again.", "Connection refused",
+        catch (HttpRequestException) {
+            MessageBox.Show("Server is unavailable. Please make sure it is running and select the folder again.",
+                "Connection refused",
                 MessageBoxButton.OK, MessageBoxImage.Error);
             ModelsPrepared = false;
             ModelSelectionFolderBadge = new PackIcon { Kind = PackIconKind.Alert };
         }
-        finally
-        {
+        finally {
             ClassificationResultText = "Not run yet";
             ClassificationInProgress = false;
         }
@@ -478,8 +418,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private void RestoreUserSettings()
     {
         var path = UserPersistence.Default.ModelPath;
-        if (path is not null)
-        {
+        if (path is not null) {
             UpdateModelPath(path);
         }
     }

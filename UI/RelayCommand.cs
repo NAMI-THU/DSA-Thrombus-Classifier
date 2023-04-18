@@ -10,9 +10,9 @@ public class RelayCommand<T> : ICommand
 
     public event EventHandler? CanExecuteChanged;
 
-    public bool CanExecute(object? parameter) {
-        if (parameter != null)
-        {
+    public bool CanExecute(object? parameter)
+    {
+        if (parameter != null) {
             return _canExecute?.Invoke((T)parameter) ?? true;
         }
 

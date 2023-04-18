@@ -1,6 +1,4 @@
-﻿using System.Security.Policy;
-
-namespace UI.Util;
+﻿namespace UI.Util;
 
 public record Attribution(string Library, License License, string Author);
 

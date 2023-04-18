@@ -37,136 +37,115 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
     public ICommand? FilePreparedNotificationCommand { get; set; }
     public ICommand? ResetFilesOtherCommand { get; set; }
 
-    public ImageSource? ImageDisplay
-    {
+    public ImageSource? ImageDisplay {
         get => _imageDisplay;
-        private set
-        {
+        private set {
             _imageDisplay = value;
             OnPropertyChanged();
         }
     }
 
-    public string FileName
-    {
+    public string FileName {
         get => _fileName;
-        private set{
+        private set {
             _fileName = value;
 
             ConvertEnabled = false;
             FilePrepared = false;
-            
-            if (_fileName.EndsWith(".nii"))
-            {
+
+            if (_fileName.EndsWith(".nii")) {
                 FilePrepared = true;
             }
-            else if(!string.IsNullOrEmpty(_fileName))
-            {
+            else if (!string.IsNullOrEmpty(_fileName)) {
                 ConvertEnabled = true;
             }
-            
+
             OnPropertyChanged();
             OnPropertyChanged(nameof(ConvertEnabled));
             OnPropertyChanged(nameof(FilePrepared));
         }
     }
 
-    public bool ConvertInProgress
-    {
+    public bool ConvertInProgress {
         get => _convertInProgress;
-        private set{
+        private set {
             if (_convertInProgress == value) return;
             _convertInProgress = value;
             OnPropertyChanged();
         }
     }
 
-    public bool ConvertEnabled
-    {
+    public bool ConvertEnabled {
         get => _convertEnabled;
-        private set{
+        private set {
             if (_convertEnabled == value) return;
             _convertEnabled = value;
             OnPropertyChanged();
         }
     }
 
-    public bool FilePrepared
-    {
+    public bool FilePrepared {
         get => _filePrepared;
-        private set{
+        private set {
             _filePrepared = value;
 
-            if (_filePrepared)
-            {
+            if (_filePrepared) {
                 HeaderColor = new SolidColorBrush(new PaletteHelper().GetTheme().PrimaryDark.Color);
                 HeaderIcon = PackIconKind.Check;
                 FilePreparedNotificationCommand?.Execute(FileName);
             }
-            else
-            {
+            else {
                 HeaderColor = Brushes.DarkRed;
                 HeaderIcon = PackIconKind.Error;
                 FilePreparedNotificationCommand?.Execute(null);
             }
+
             OnPropertyChanged();
         }
     }
 
-    public PackIconKind HeaderIcon
-    {
+    public PackIconKind HeaderIcon {
         get => _headerIcon;
-        set
-        {
+        set {
             if (Equals(value, _headerIcon)) return;
             _headerIcon = value;
             OnPropertyChanged();
         }
     }
 
-    public Brush HeaderColor
-    {
+    public Brush HeaderColor {
         get => _headerColor;
-        set
-        {
-            if (Equals(value, _headerColor))  return;
+        set {
+            if (Equals(value, _headerColor)) return;
             _headerColor = value;
             OnPropertyChanged();
         }
     }
 
-    public string ImageName
-    {
+    public string ImageName {
         get => _imageName;
-        set
-        {
+        set {
             if (value == _imageName) return;
             _imageName = value;
             OnPropertyChanged();
         }
     }
 
-    public ICommand ConvertCommand
-    {
+    public ICommand ConvertCommand {
         get { return _convertCommand ??= new RelayCommand<object>(_ => ConvertOnClick(), _ => ConvertEnabled); }
     }
 
-    public ICommand BrowseCommand
-    {
+    public ICommand BrowseCommand {
         get { return _browseCommand ??= new RelayCommand<object>(_ => BrowseOnClick()); }
     }
 
-    public ICommand ChangeImageCommand
-    {
+    public ICommand ChangeImageCommand {
         get { return _changeImageCommand ??= new RelayCommand<float[][]>(array => ImageInjected(array)); }
     }
 
-    public ICommand ResetFilesCommand
-    {
-        get
-        {
-            return _resetFilesCommand ??= new RelayCommand<object>(_ =>
-            {
+    public ICommand ResetFilesCommand {
+        get {
+            return _resetFilesCommand ??= new RelayCommand<object>(_ => {
                 FileName = "";
                 ImageDisplay = null;
             });
@@ -175,21 +154,20 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     private void BrowseOnClick()
     {
-        if (FilePrepared)
-        {
+        if (FilePrepared) {
             ResetFilesCommand.Execute(null); // Remove Image
             ResetFilesOtherCommand?.Execute(null);
         }
-        
+
         var openFileDialog = new OpenFileDialog();
-        if (openFileDialog.ShowDialog() == true)
-        {
+        if (openFileDialog.ShowDialog() == true) {
             FileName = openFileDialog.FileName;
         }
     }
@@ -198,19 +176,16 @@ public partial class NiftiView : UserControl, INotifyPropertyChanged
     {
         ConvertEnabled = false;
         ConvertInProgress = true;
-        try
-        {
+        try {
             var newPath = await DicomConverter.Dicom2Nifti(FileName);
             FileName = newPath;
         }
-        catch (ArgumentException)
-        {
+        catch (ArgumentException) {
             // Conversion was not possible
             MessageBox.Show("Conversion of the input file failed. Please make sure it is in the correct format.",
                 "Conversion failed", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
-        finally
-        {
+        finally {
             ConvertInProgress = false;
         }
     }

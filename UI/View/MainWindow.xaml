@@ -28,29 +28,31 @@
         <StackPanel Orientation="Vertical">
             <DockPanel>
                 <Button DockPanel.Dock="Left"
-                    Style="{StaticResource MaterialDesignIconForegroundButton}"
-                    Command="{Binding ShowAboutWindowCommand}"
-                    ToolTip="About">
+                        Style="{StaticResource MaterialDesignIconForegroundButton}"
+                        Command="{Binding ShowAboutWindowCommand}"
+                        ToolTip="About">
                     <materialDesign:PackIcon
-                        Kind="Information"/>
+                        Kind="Information" />
                 </Button>
-                
+
                 <TextBlock
                     Style="{StaticResource MaterialDesignHeadline2TextBlock}"
                     Text="DSA Classifier" Margin="10" HorizontalAlignment="Center" />
             </DockPanel>
             <materialDesign:Card
                 materialDesign:ElevationAssist.Elevation="Dp16" UniformCornerRadius="15"
-                Margin="10" Padding="5" >
+                Margin="10" Padding="5">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <materialDesign:PackIcon Kind="{Binding ClassificationResultIcon}" Height="40" Width="40" Foreground="{Binding ClassificationResultColor}"/>
+                    <materialDesign:PackIcon Kind="{Binding ClassificationResultIcon}" Height="40" Width="40"
+                                             Foreground="{Binding ClassificationResultColor}" />
                     <TextBlock
                         Margin="40,0,40,0"
                         Style="{StaticResource MaterialDesignHeadline4TextBlock}"
                         Foreground="{Binding ClassificationResultColor}"
                         HorizontalAlignment="Center"
                         Text="{Binding ClassificationResultText}" />
-                    <materialDesign:PackIcon Kind="{Binding ClassificationResultIcon}" Height="40" Width="40" Foreground="{Binding ClassificationResultColor}"/>
+                    <materialDesign:PackIcon Kind="{Binding ClassificationResultIcon}" Height="40" Width="40"
+                                             Foreground="{Binding ClassificationResultColor}" />
                 </StackPanel>
             </materialDesign:Card>
             <Grid Margin="10">
@@ -196,54 +198,54 @@
                     <materialDesign:Card Margin="20">
                         <Expander Header="Metrics">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <materialDesign:Chip
-                                    Content="{Binding Threshold_TP}"
-                                    Cursor="Arrow"
-                                    Icon="TP" />
-                                <materialDesign:Chip
-                                    Content="{Binding Threshold_FP}"
-                                    Cursor="Arrow"
-                                    Icon="FP" />
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <materialDesign:Chip
+                                        Content="{Binding Threshold_TP}"
+                                        Cursor="Arrow"
+                                        Icon="TP" />
+                                    <materialDesign:Chip
+                                        Content="{Binding Threshold_FP}"
+                                        Cursor="Arrow"
+                                        Icon="FP" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <materialDesign:Chip
+                                        Content="{Binding Threshold_FN}"
+                                        Cursor="Arrow"
+                                        Icon="FN" />
+                                    <materialDesign:Chip
+                                        Content="{Binding Threshold_TN}"
+                                        Cursor="Arrow"
+                                        Icon="TN" />
+                                </StackPanel>
+                                <Separator Margin="20" />
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:Chip
+                                        Content="Accuracy"
+                                        Cursor="Arrow"
+                                        Icon="{Binding Accuracy}" />
+                                    <materialDesign:Chip
+                                        Content="F1-Score"
+                                        Cursor="Arrow"
+                                        Icon="{Binding F1Score}" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <materialDesign:Chip
+                                        Content="Precision"
+                                        Cursor="Arrow"
+                                        Icon="{Binding Precision}" />
+                                    <materialDesign:Chip
+                                        Content="Recall"
+                                        Cursor="Arrow"
+                                        Icon="{Binding Recall}" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <materialDesign:Chip
+                                        Content="Matthews Correlation"
+                                        Cursor="Arrow"
+                                        Icon="{Binding MCC}" />
+                                </StackPanel>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <materialDesign:Chip
-                                    Content="{Binding Threshold_FN}"
-                                    Cursor="Arrow"
-                                    Icon="FN" />
-                                <materialDesign:Chip
-                                    Content="{Binding Threshold_TN}"
-                                    Cursor="Arrow"
-                                    Icon="TN" />
-                            </StackPanel>
-                            <Separator Margin="20" />
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:Chip
-                                    Content="Accuracy"
-                                    Cursor="Arrow"
-                                    Icon="{Binding Accuracy}" />
-                                <materialDesign:Chip
-                                    Content="F1-Score"
-                                    Cursor="Arrow"
-                                    Icon="{Binding F1Score}" />
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <materialDesign:Chip
-                                    Content="Precision"
-                                    Cursor="Arrow"
-                                    Icon="{Binding Precision}" />
-                                <materialDesign:Chip
-                                    Content="Recall"
-                                    Cursor="Arrow"
-                                    Icon="{Binding Recall}" />
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <materialDesign:Chip
-                                    Content="Matthews Correlation"
-                                    Cursor="Arrow"
-                                    Icon="{Binding MCC}" />
-                            </StackPanel>
-                        </StackPanel>
                         </Expander>
                     </materialDesign:Card>
                 </StackPanel>
