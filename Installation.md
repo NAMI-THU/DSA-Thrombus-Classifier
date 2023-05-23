@@ -4,7 +4,7 @@
 
 ## Setup
 
-This chapter describes the steps that need to be taken in order to
+This section describes the steps that need to be taken in order to
 install the application.
 
 ### Prerequisites
@@ -67,6 +67,9 @@ the openscience framework.
 
 -   Trained models  
     <https://osf.io/n8k4r/>
+	
+-	Select
+	`Demonstrator/Models.zip`
 
 Extract the zip-archive file and place the directory in a place of your
 choice. Please ensure to not change the internal structure of the

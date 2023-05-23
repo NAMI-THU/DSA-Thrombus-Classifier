@@ -1,13 +1,14 @@
 # DSA-Thrombus-Classifier
 PoC demonstration tool to use CNNs to classify digital subtraction angiography images of the brain into thrombus-free and non-thrombus-free.
 User application which uses [Mittmann et al.](https://pubmed.ncbi.nlm.nih.gov/35604489/)'s classifier.
-We describe this application in our paper [TODO].
+We describe this application in our paper [Towards clinical translation of deep-learning based classification of DSA image sequences for stroke treatment].
 
 ***This tool only represents a proof of concept and is no medical product!***
 
 ## Getting started
 Before the first start, you need to setup the python service. For this, execute `Backend/setup.bat` . This might take a while.
-In the meanwhile, you can download the pretrained model from our project page in the [OpenScienceFramework](https://osf.io/n8k4r/). Make sure to keep the structure of the folder.
+In the meanwhile, you can download the pretrained model from our project page in the [OpenScienceFramework](https://osf.io/n8k4r/), from the `Demonstrator` directory in the data section. Make sure to keep the structure of the folder.
+You will also find a PDF version of our detailed [installation manual](https://github.com/NAMI-THU/DSA-Thrombus-Classifier/blob/main/Installation.md) there.
 
 To use the application, start the python backend using `Backend/RunServer.bat` . Afterwards, open the frontend application using `UI/Demonstrator.exe` .
 You first need to select the model you want to use. For this, select the directory of your models, in which the two subdirectories, frontal and lateral, are contained. Once this is selected, the application will remember this at every start until you change it again. Afterwards, you are ready to go. For this, select the frontal and lateral image respectively. We support nifti as well as DICOM, however, for the ladder, you first need to convert the file using the conversion-button. Once both files are selected, the application displays a mid-sequence preview. You are then ready to run the classification using the respective robot-button. 
