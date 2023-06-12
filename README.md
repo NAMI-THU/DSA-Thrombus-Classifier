@@ -1,7 +1,7 @@
 # DSA-Thrombus-Classifier
 PoC demonstration tool to use CNNs to classify digital subtraction angiography images of the brain into thrombus-free and non-thrombus-free.
 User application which uses [Mittmann et al.](https://pubmed.ncbi.nlm.nih.gov/35604489/)'s classifier.
-We describe this application in our paper [Towards clinical translation of deep-learning based classification of DSA image sequences for stroke treatment].
+We describe this application in our paper [Towards clinical translation of deep-learning based classification of DSA image sequences for stroke treatment](https://link.springer.com/chapter/10.1007/978-3-658-41657-7_22).
 
 ***This tool only represents a proof of concept and is no medical product!***
 
@@ -34,3 +34,31 @@ You need to include [SimpleITKNative.dll and SimpleITKManaged.dll](https://githu
 
 ## Attribution
 Icon made by Freepik from www.flaticon.com
+
+## Citation
+If you like to use this tool or wish to refer to our work, please do so by citing:
+```
+@InProceedings{10.1007/978-3-658-41657-7_22,
+author="Baumg{\"a}rtner, Timo
+and Mittmann, Benjamin J.
+and Malzacher, Till
+and Ro{\ss}kopf, Johannes
+and Braun, Michael
+and Schmitz, Bernd
+and Franz, Alfred M.",
+editor="Deserno, Thomas M.
+and Handels, Heinz
+and Maier, Andreas
+and Maier-Hein, Klaus
+and Palm, Christoph
+and Tolxdorff, Thomas",
+title="Towards Clinical Translation of Deep Learning-based Classification of DSA Image Sequences for Stroke Treatment",
+booktitle="Bildverarbeitung f{\"u}r die Medizin 2023",
+year="2023",
+publisher="Springer Fachmedien Wiesbaden",
+address="Wiesbaden",
+pages="95--101",
+abstract="In the event of stroke, a catheter-guided procedure (thrombectomy) is used to remove blood clots. Feasibility of machine learning based automatic classifications for thrombus detection on digital substraction angiography (DSA) sequences has been demonstrated. It was however not used live in the clinic, yet. We present an open-source tool for automatic thrombus classification and test it on three selected clinical cases regarding functionality and classification runtime. With our trained model all large vessel occlusions in the M1 segment were correctly classified. One small remaining M3 thrombus was not detected. Runtime was in the range from 1 to 10 seconds depending on the used hardware. We conclude that our open-source software tool enables clinical staff to classify DSA sequences in (close to) realtime and can be used for further studies in clinics.",
+isbn="978-3-658-41657-7"
+}
+```
