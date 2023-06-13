@@ -1,7 +1,7 @@
 # DSA-Thrombus-Classifier
 PoC demonstration tool to use CNNs to classify digital subtraction angiography images of the brain into thrombus-free and non-thrombus-free.
 User application which uses [Mittmann et al.](https://pubmed.ncbi.nlm.nih.gov/35604489/)'s classifier.
-We describe this application in our paper [Towards clinical translation of deep-learning based classification of DSA image sequences for stroke treatment](https://link.springer.com/chapter/10.1007/978-3-658-41657-7_22).
+We describe this application in our paper [Towards clinical translation of deep-learning based classification of DSA image sequences for stroke treatment](https://arxiv.org/abs/2306.06207).
 
 ***This tool only represents a proof of concept and is no medical product!***
 
