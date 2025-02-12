@@ -1,4 +1,4 @@
-cd Python-Server
+cd Backend
 start call RunServer.bat
 cd ..
 timeout /t 10 /nobreak
