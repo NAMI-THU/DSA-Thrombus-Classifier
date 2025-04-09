@@ -16,11 +16,11 @@ reproduce the results published in our paper, you should stick with the
 same versions that are mentioned here in order to ensure to have the
 same environment.
 
--   Python 3.10.5  
-    <https://www.python.org/>
+-   Python 3.10.11  
+    <https://www.python.org/downloads/release/python-31011/>
 
--   .NET 7.0 Desktop Runtime  
-    <https://dotnet.microsoft.com/en-us/download/dotnet/7.0/runtime>
+-   .NET 9.0 Desktop Runtime  
+    <https://dotnet.microsoft.com/en-us/download/dotnet/9.0/runtime>
 
 #### Optional steps for GPU support
 
@@ -83,7 +83,7 @@ provides an interface to the user. However, the classification itself is
 done in a backend service, which runs with python. Before the first use,
 you have to setup this backend service. For this:
 
-1.  Navigate into the `Python-Server` directory
+1.  Navigate into the `Backend` directory
 
 2.  Execute `setup.bat`
 
@@ -99,7 +99,7 @@ To use the application, you first need to start the backend service and
 afterwards launch the graphical user interface. For this simply run the `StartApplication.bat` in the root directory.
 Alternatively, follow the following steps:
 
-1.  Navigate into the `Python-Server` directory
+1.  Navigate into the `Backend` directory
 
 2.  Execute `RunServer.bat`
 
