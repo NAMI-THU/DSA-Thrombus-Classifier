@@ -16,8 +16,8 @@ reproduce the results published in our paper, you should stick with the
 same versions that are mentioned here in order to ensure to have the
 same environment.
 
--   Python 3.10.11  
-    <https://www.python.org/downloads/release/python-31011/>
+-   Python 3.12
+    <https://www.python.org/downloads/release/python-31210//>
 
 -   .NET 9.0 Desktop Runtime  
     <https://dotnet.microsoft.com/en-us/download/dotnet/9.0/runtime>
@@ -29,10 +29,10 @@ utilize it in order to gain a significant speedup for the
 classification, you will need to install CUDA along with your GPU
 driver. The version we used in our paper was
 
--   NVIDIA GPU driver 526.98  
+-   NVIDIA GPU driver  
     <https://www.nvidia.com/Download/index.aspx>
 
--   NVIDIA CUDA Toolkit 11.7.1  
+-   NVIDIA CUDA Toolkit 12.6  
     <https://developer.nvidia.com/cuda-downloads>
 
 If you further wish to train your own model, it is additionally
