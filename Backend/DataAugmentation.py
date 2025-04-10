@@ -74,7 +74,8 @@ class DataAugmentation(object):
                 ], p=1,
                 keypoint_params=albu.KeypointParams(format='yx'),
                 additional_targets={'imageOtherView': 'image',
-                                    'keypointsOtherView': 'keypoints'}
+                                    'keypointsOtherView': 'keypoints'},
+            is_check_shapes = False
             )
         else:
             self.transform = albu.Compose(
@@ -103,7 +104,8 @@ class DataAugmentation(object):
                             albu.Downscale(p=0.3, scale_min=0.5, scale_max=0.5)
                         ], p=0.5)
                 ], p=1,
-                keypoint_params=albu.KeypointParams(format='yx')
+                keypoint_params=albu.KeypointParams(format='yx'),
+                is_check_shapes=False
             )
 
     '''====================================================================='''
@@ -120,7 +122,8 @@ class DataAugmentation(object):
                 ], p=1,
                 keypoint_params=albu.KeypointParams(format='yx'),
                 additional_targets={'imageOtherView': 'image',
-                                    'keypointsOtherView': 'keypoints'}
+                                    'keypointsOtherView': 'keypoints'},
+                is_check_shapes=False
             )
         else:
             self.transform = albu.Compose(
@@ -128,7 +131,8 @@ class DataAugmentation(object):
                     CustomTransforms.Rotate90(p=1),
                     albu.Resize(512, 512, interpolation=cv2.INTER_LINEAR)
                 ], p=1,
-                keypoint_params=albu.KeypointParams(format='yx')
+                keypoint_params=albu.KeypointParams(format='yx'),
+                is_check_shapes=False
             )
 
     '''====================================================================='''
